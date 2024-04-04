@@ -1,6 +1,6 @@
 from collections import deque
 
-from commandFactory import CommandFactory
+from command_factory import CommandFactory
 from exceptions import CommandNotFoundError
 from exceptions import MultipleRedirectionError
 from utils import File
