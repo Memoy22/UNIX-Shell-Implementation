@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      shell:
+        image: docker:20.10.9-dind
+        options: >-
+          --entrypoint "dockerd-entrypoint.sh"
+        ports:
+          - 80:8000
+        env:
+          DOCKER_TLS_CERTDIR: "/certs"
+          DOCKER_HOST: "tcp://localhost:2375"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t shell .
+          docker run -p 80:8000 --rm shell /comp0010/tools/test
