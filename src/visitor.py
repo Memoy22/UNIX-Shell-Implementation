@@ -33,14 +33,14 @@ class ShellVisitor(ParseTreeVisitor):
         arguments = [self.visit(arg) for arg in ctx.argument()] or None
         subcommands = [self.visit(subcmd) for subcmd in
                        ctx.subcommand()] or None
-        inputFile, outputFile = self.getRedirections(ctx)
+        input_file, output_file = self.getRedirections(ctx)
 
         call = {
             "cmd": cmd,
             "arguments": arguments,
             "subcommands": subcommands,
-            "inputFile": inputFile,
-            "outputFile": outputFile,
+            "inputFile": input_file,
+            "outputFile": output_file,
         }
         if call["cmd"] is None and call["inputFile"] is not None:
             call["cmd"] = "<"
@@ -73,10 +73,15 @@ class ShellVisitor(ParseTreeVisitor):
         )
         return inputFile, outputFile
 
+    def visitRedirection(self, ctx: shellParser.RedirectionContext):
+        redirect_type = ctx.children[0].getText()
+        argument = self.visit(ctx.argument())
+        return redirect_type, argument
+
     def handleRedirection(self, ctx: shellParser.CallContext):
         """
         Handle redirections in the call.
-        Redirections can be in the beginning of the call or in the middle of the call.
+        Redirections can be in the beginning of the call or in the middle.
         """
         redirections = []
 
@@ -127,72 +132,6 @@ class ShellVisitor(ParseTreeVisitor):
                 arguments.append(unquoted_arg)
         return arguments
 
-    @staticmethod
-    def visitUnquoted(ctx: shellParser.UnquotedContext):
-        """
-        Return the unquoted text from the context.
-        This method removes the quotes from the unquoted text.
-        """
-        uq = ctx.UNQUOTED().getText()
-        if uq[0] == '"' or uq[0] == "'":
-            uq = uq[1:]
-        if '"' in uq:
-            new_uq = ""
-            for char in uq:
-                if char != '"':
-                    new_uq += char
-            uq = new_uq
-        return uq
-
-    @staticmethod
-    def visitQuoted(ctx: shellParser.QuotedContext):
-        if ctx.SINGLE_QUOTED():
-            return ctx.SINGLE_QUOTED().getText()
-        elif ctx.DOUBLE_QUOTED():
-            return ctx.DOUBLE_QUOTED().getText()[1:-1]
-        elif ctx.BACKQUOTED():
-            return ctx.BACKQUOTED().getText()
-
-    def visitRedirection(self, ctx: shellParser.RedirectionContext):
-        redirect_type = ctx.children[0].getText()
-        argument = self.visit(ctx.argument())
-        return redirect_type, argument
-
-    @staticmethod
-    def converter(string_to_parse):
-        """
-        Convert a string to a list of dictionaries with the call information.
-        The string is parsed using the shell grammar and the visitor pattern.
-        """
-        input_stream = InputStream(string_to_parse)
-        lexer = shellLexer(input_stream)
-        tokens = CommonTokenStream(lexer)
-        parser = shellParser(tokens)
-        tree = parser.cmdline()
-        custom_visitor = ShellVisitor()
-        result = custom_visitor.visit(tree)
-        return result
-
-    @staticmethod
-    def filter_args(call_list, echo_flag):
-        """
-        Filter the arguments from the call list.
-        If the echo_flag is True, the arguments are returned as they are.
-        If the echo_flag is False, the arguments are returned without the quotes.
-        """
-        if call_list is None:
-            return
-        res = [arg for arg in call_list[0] if arg]
-        if not echo_flag:
-            temp = []
-            for arg in res:
-                if arg[0] == arg[-1] == "'":
-                    temp.append(arg[1:-1])
-                else:
-                    temp.append(arg)
-            res = temp
-        return res
-
     def clean_args(self, cmd_line):
         """
         Clean the arguments in the command line.
@@ -209,7 +148,7 @@ class ShellVisitor(ParseTreeVisitor):
     def get_sub_call(self, cmd_line):
         """
         Get the subcommands from the command line.
-        The subcommands are stored in the subcommands key of the call dictionary.
+        The subcommands are stored in the subcommands key of dictionary.
         """
         for command in cmd_line:
             for call_dict in command:
@@ -264,3 +203,64 @@ class ShellVisitor(ParseTreeVisitor):
         cmdline = self.get_sub_call(cmdline)
         cmdline = self.get_cmd_from_sub_call(cmdline)
         return cmdline
+
+    @staticmethod
+    def visitUnquoted(ctx: shellParser.UnquotedContext):
+        """
+        Return the unquoted text from the context.
+        This method removes the quotes from the unquoted text.
+        """
+        uq = ctx.UNQUOTED().getText()
+        if uq[0] == '"' or uq[0] == "'":
+            uq = uq[1:]
+        if '"' in uq:
+            new_uq = ""
+            for char in uq:
+                if char != '"':
+                    new_uq += char
+            uq = new_uq
+        return uq
+
+    @staticmethod
+    def visitQuoted(ctx: shellParser.QuotedContext):
+        if ctx.SINGLE_QUOTED():
+            return ctx.SINGLE_QUOTED().getText()
+        elif ctx.DOUBLE_QUOTED():
+            return ctx.DOUBLE_QUOTED().getText()[1:-1]
+        elif ctx.BACKQUOTED():
+            return ctx.BACKQUOTED().getText()
+
+    @staticmethod
+    def converter(string_to_parse):
+        """
+        Convert a string to a list of dictionaries with the call information.
+        The string is parsed using the shell grammar and the visitor pattern.
+        """
+        input_stream = InputStream(string_to_parse)
+        lexer = shellLexer(input_stream)
+        tokens = CommonTokenStream(lexer)
+        parser = shellParser(tokens)
+        tree = parser.cmdline()
+        custom_visitor = ShellVisitor()
+        result = custom_visitor.visit(tree)
+        return result
+
+    @staticmethod
+    def filter_args(call_list, echo_flag):
+        """
+        Filter the arguments from the call list.
+        If the echo_flag is True, the arguments are returned as they are.
+        If the echo_flag is False, the arguments are returned without quotes.
+        """
+        if call_list is None:
+            return
+        res = [arg for arg in call_list[0] if arg]
+        if not echo_flag:
+            temp = []
+            for arg in res:
+                if arg[0] == arg[-1] == "'":
+                    temp.append(arg[1:-1])
+                else:
+                    temp.append(arg)
+            res = temp
+        return res

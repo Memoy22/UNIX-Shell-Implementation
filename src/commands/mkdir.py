@@ -3,10 +3,24 @@ import os
 from commands.command import Command
 from exceptions import FileAlreadyExistsError
 from exceptions import FlagError
-from utility import Validator
+from utils import Validator
 
 
 class Mkdir(Command):
+
+    def execute(self, args, stdin):
+        p, dirs = self.validate_args(args)
+        for dir in dirs:
+            if Validator.check_path_exists_bool(dir):
+                self.raise_error(dir)
+            if p:
+                os.makedirs(dir)
+            else:
+                try:
+                    os.mkdir(dir)
+                except FileNotFoundError:
+                    raise FlagError(f"Error: Flag -p required for '{dir}'")
+
     @staticmethod
     def raise_error(file):
         msg = f"Error: Cannot create directory. '{file}' already exists"
@@ -40,16 +54,3 @@ class Mkdir(Command):
                 p = True
                 dirs = args[1:]
         return p, dirs
-
-    def execute(self, args, stdIn):
-        p, dirs = self.validate_args(args)
-        for dir in dirs:
-            if Validator.check_path_exists_bool(dir):
-                self.raise_error(dir)
-            if p:
-                os.makedirs(dir)
-            else:
-                try:
-                    os.mkdir(dir)
-                except FileNotFoundError:
-                    raise FlagError(f"Error: Flag -p required for '{dir}'")

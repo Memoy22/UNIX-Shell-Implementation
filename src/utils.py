@@ -38,7 +38,7 @@ class Validator:
     Methods:
         check_flag: Check if the given flag is the expected flag.
         check_path_exists: Check if the given path exists.
-        check_path_exists_bool: Check if the given path exists and return a boolean.
+        check_path_exists_bool: Check if given path exists and return a boolean
         check_string_isdigit: Check if the given string is a digit.
     """
     @staticmethod

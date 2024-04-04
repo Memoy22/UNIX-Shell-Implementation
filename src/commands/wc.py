@@ -1,9 +1,63 @@
 from commands.command import Command
 from exceptions import FlagError
-from utility import File, Validator
+from utils import File, Validator
 
 
 class Wc(Command):
+
+    def validate_args(self, args, stdin):
+        """
+        Validate the arguments given in the command line.
+        Args:
+            args (list): List of arguments given in the command line.
+            stdin (list): List of lines from standard input.
+        Returns:
+            tuple: Tuple containing the flags and lines from files or stdin.
+        Raises:
+            FlagError: If the flag given is not -l, -w, or -m.
+            FlagError: If the file does not exist.
+            FlagError: If the wrong number of arguments are given
+        """
+        l, w, m = True, True, True
+        num_args = len(args) if args else 0
+        if num_args == 0 and stdin is not None:
+            lines = stdin
+        elif num_args > 0:
+            if args[0].startswith("-"):
+                l, w, m = self.process_flag(args[0])
+                lines = self.process_files(args[1:])
+                if not lines:
+                    lines = stdin
+            else:
+                lines = self.process_files(args)
+        else:
+            raise FlagError("Error: Wrong number of arguments given")
+
+        return (l, w, m), lines
+
+    def execute(self, args, stdin):
+        """ Execute the wc command.
+        Args:
+            args (list): List of arguments given in the command line.
+            stdin (list): List of lines from standard input.
+        Returns:
+            str: The output of the wc command.
+        """
+        temp = self.validate_args(args, stdin)
+        flags = temp[0]
+        lines = temp[1]
+
+        output = []
+
+        if flags[0]:
+            output.append(str(self.exec_l(lines)))
+        if flags[1]:
+            output.append(str(self.exec_w(lines)))
+        if flags[2]:
+            output.append(str(self.exec_m(lines)))
+
+        return " ".join(output) + "\n"
+
     @staticmethod
     def process_flag(arg):
         """
@@ -47,36 +101,6 @@ class Wc(Command):
             lines += temp_lines
         return lines
 
-    def validate_args(self, args, stdIn):
-        """
-        Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdIn (list): List of lines from standard input.
-        Returns:
-            tuple: Tuple containing the flags and lines from files or standard input.
-        Raises:
-            FlagError: If the flag given is not -l, -w, or -m.
-            FlagError: If the file does not exist.
-            FlagError: If the wrong number of arguments are given
-        """
-        l, w, m = True, True, True
-        num_args = len(args) if args else 0
-        if num_args == 0 and stdIn is not None:
-            lines = stdIn
-        elif num_args > 0:
-            if args[0].startswith("-"):
-                l, w, m = self.process_flag(args[0])
-                lines = self.process_files(args[1:])
-                if not lines:
-                    lines = stdIn
-            else:
-                lines = self.process_files(args)
-        else:
-            raise FlagError("Error: Wrong number of arguments given")
-
-        return (l, w, m), lines
-
     @staticmethod
     def exec_l(lines):
         return len(lines)
@@ -96,26 +120,3 @@ class Wc(Command):
             temp_chars = len(line)
             chars += temp_chars
         return chars
-
-    def execute(self, args, stdIn):
-        """ Execute the wc command.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdIn (list): List of lines from standard input.
-        Returns:
-            str: The output of the wc command.
-        """
-        temp = self.validate_args(args, stdIn)
-        flags = temp[0]
-        lines = temp[1]
-
-        output = []
-
-        if flags[0]:
-            output.append(str(self.exec_l(lines)))
-        if flags[1]:
-            output.append(str(self.exec_w(lines)))
-        if flags[2]:
-            output.append(str(self.exec_m(lines)))
-
-        return " ".join(output) + "\n"

@@ -1,11 +1,17 @@
 from commands.command import Command
 from exceptions import FlagError
-from utility import Validator
+from utils import Validator
 import os
 import fnmatch
 
 
 class Find(Command):
+
+    def execute(self, args, stdin=None):
+        path, pattern = self.validate_flags(args)
+        matched_files = self.find_files(path, pattern)
+        return '\n'.join(matched_files) + '\n'
+
     @staticmethod
     def validate_flags(args):
         """ Validate the flags given in the command line.
@@ -44,8 +50,3 @@ class Find(Command):
         for dirpath, dirnames, filenames in os.walk(path):
             for filename in fnmatch.filter(filenames, pattern):
                 yield os.path.join(dirpath, filename)
-
-    def execute(self, args, stdIn=None):
-        path, pattern = self.validate_flags(args)
-        matched_files = self.find_files(path, pattern)
-        return '\n'.join(matched_files)+'\n'

@@ -1,32 +1,38 @@
 from commands.command import Command
-from utility import File
-from utility import Validator
+from utils import File
+from utils import Validator
 from exceptions import FlagError
 
 
 class Uniq(Command):
+
+    def execute(self, args, stdin=None):
+        case_insensitive, lines = self.validate_args(args, stdin)
+        lines = [line.rstrip("\n") for line in lines]
+        return '\n'.join(self.get_uniq(case_insensitive, lines)) + '\n'
+
     @staticmethod
-    def validate_args(args, stdIn):
+    def validate_args(args, stdin):
         """
         Validate the arguments given in the command line.
         Args:
             args (list): List of arguments given in the command line.
-            stdIn (list): List of lines from standard input.
+            stdin (list): List of lines from standard input.
         Returns:
-            tuple: Tuple containing the flags and lines from files or standard input.
+            tuple: Tuple containing the flags and lines from files or stdin.
         Raises:
             FlagError: If the flag given is not -i.
             FlagError: If the file does not exist.
         """
         num_args = 0 if args is None else len(args)
         case_insensitive = False
-        if num_args == 0 and stdIn is not None:
-            lines = stdIn
+        if num_args == 0 and stdin is not None:
+            lines = stdin
         elif num_args == 1:
             if args[0].startswith('-'):
                 Validator.check_flag(args[0], "-i")
                 case_insensitive = True
-                lines = stdIn
+                lines = stdin
             else:
                 Validator.check_path_exists(args[0])
                 lines = File(args[0]).read_lines()
@@ -56,8 +62,3 @@ class Uniq(Command):
                 result_lines.append(line)
                 prev_line = compare_line
         return result_lines
-
-    def execute(self, args, stdIn=None):
-        case_insensitive, lines = self.validate_args(args, stdIn)
-        lines = [line.rstrip("\n") for line in lines]
-        return '\n'.join(self.get_uniq(case_insensitive, lines)) + '\n'

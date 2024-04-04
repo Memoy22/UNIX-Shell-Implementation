@@ -1,14 +1,14 @@
 from commands.command import Command
-from utility import File
-from utility import Validator
+from utils import File
+from utils import Validator
 
 
 class Cat(Command):
-    def execute(self, args, stdIn=None):
+    def execute(self, args, stdin=None):
         """ Concatenate files and print on the standard output.
         Args:
             args (list): List of arguments given in the command line.
-            stdIn (list): List of lines from standard input.
+            stdin (list): List of lines from standard input.
         Returns:
             str: Concatenated output of files or standard input.
         Raises:
@@ -19,8 +19,8 @@ class Cat(Command):
             for file_path in args:
                 Validator.check_path_exists(file_path)
                 concat_output += File(file_path).read()
-        elif stdIn is not None:
-            for line in stdIn:
+        elif stdin is not None:
+            for line in stdin:
                 concat_output += line
 
         return concat_output + "\n"

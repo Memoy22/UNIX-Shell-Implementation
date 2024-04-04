@@ -1,26 +1,32 @@
 from commands.command import Command
-from utility import File
-from utility import Validator
+from utils import File
+from utils import Validator
 from exceptions import FlagError
 
 
 class Head(Command):
+
+    def execute(self, args, stdin=None):
+        n, lines = self.validate_flags(args, stdin)
+        lines = [line.rstrip('\n') for line in lines]
+        return '\n'.join(lines[:n]) + '\n'
+
     @staticmethod
-    def validate_flags(args, stdIn):
+    def validate_flags(args, stdin):
         """ Validate the flags given in the command line.
         Args:
             args (list): List of arguments given in the command line.
-            stdIn (list): List of lines from standard input.
+            stdin (list): List of lines from standard input.
         Returns:
-            tuple: Tuple containing the number of lines and lines from files or standard input.
+            tuple: Tuple containing the flag n and lines from files or stdin.
         Raises:
             FlagError: If the flag given is not -n.
             FlagError: If the file does not exist.
         """
         num_args = len(args) if args else 0
         n = 10
-        if num_args == 0 and stdIn is not None:
-            lines = stdIn
+        if num_args == 0 and stdin is not None:
+            lines = stdin
         elif num_args == 1:
             Validator.check_path_exists(args[0])
             lines = File(args[0]).read_lines()
@@ -28,7 +34,7 @@ class Head(Command):
             Validator.check_flag(args[0], "-n")
             Validator.check_string_isdigit(args[1])
             n = int(args[1])
-            lines = stdIn
+            lines = stdin
         elif num_args == 3:
             Validator.check_flag(args[0], "-n")
             Validator.check_string_isdigit(args[1])
@@ -38,8 +44,3 @@ class Head(Command):
         else:
             raise FlagError("Error: Wrong number of flags given")
         return n, lines
-
-    def execute(self, args, stdIn=None):
-        n, lines = self.validate_flags(args, stdIn)
-        lines = [line.rstrip('\n') for line in lines]
-        return '\n'.join(lines[:n])+'\n'

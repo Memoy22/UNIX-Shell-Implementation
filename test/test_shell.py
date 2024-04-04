@@ -8,7 +8,7 @@ from parameterized import parameterized
 from exceptions import (FlagError, InvalidFormatError,
                         MultipleRedirectionError, FileAlreadyExistsError)
 from shell import eval, interactive_mode, main
-from utility import File
+from utils import File
 
 
 class TestShell(unittest.TestCase):

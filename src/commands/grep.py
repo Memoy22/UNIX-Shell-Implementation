@@ -2,15 +2,15 @@ import re
 
 from commands.command import Command
 from exceptions import FlagError
-from utility import File, Validator
+from utils import File, Validator
 
 
 class Grep(Command):
-    def execute(self, args, stdIn=None):
+    def execute(self, args, stdin=None):
         """ Execute the grep command.
         Args:
             args (list): List of arguments given in the command line.
-            stdIn (list): List of lines from standard input.
+            stdin (list): List of lines from standard input.
         Returns:
             str: Lines that match the pattern.
         Raises:
@@ -21,7 +21,7 @@ class Grep(Command):
         if args:
             pattern = args[0]
             files = args[1:]
-        if not args and stdIn is None:
+        if not args and stdin is None:
             raise FlagError("Error: Wrong number of flags given")
 
         if args and files:
@@ -34,9 +34,9 @@ class Grep(Command):
                     if re.search(pattern, line):
                         match_lines.append(file + ":" +
                                            line if multi_files else line)
-        elif stdIn is not None:
-            stdIn = [line.rstrip() for line in stdIn]
-            for line in stdIn:
+        elif stdin is not None:
+            stdin = [line.rstrip() for line in stdin]
+            for line in stdin:
                 if re.search(pattern, line):
                     match_lines.append(line)
 

@@ -3,5 +3,5 @@ import os
 
 
 class Pwd(Command):
-    def execute(self, args, stdIn=None):
+    def execute(self, args, stdin=None):
         return os.getcwd()+'\n'
