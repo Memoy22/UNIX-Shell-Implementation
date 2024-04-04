@@ -14,10 +14,6 @@ To execute the shell in interactive mode, run
 
     docker run -it --rm shell /comp0010/sh
 
-To execute the shell in non-interactive mode (to evaluate a specific command such as `echo foo`), run
-
-    docker run --rm shell /comp0010/sh -c 'echo foo'
-
 To execute unit tests, run
 
     docker run -p 80:8000 -ti --rm shell /comp0010/tools/test
