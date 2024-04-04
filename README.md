@@ -25,6 +25,7 @@ To execute code analysis, run
     docker run -p 80:8000 -ti --rm shell /comp0010/tools/analysis
 
 Then, the results of code analysis will be available at [http://localhost](http://localhost)
+Note: Folders like venv can be excluded from the analysis by using the --exclude flag in tools/analysis
 
 To execute test coverage, run
 
