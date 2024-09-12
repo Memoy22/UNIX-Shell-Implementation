@@ -4,30 +4,19 @@ options {
   tokenVocab=ShellLexer;
 }
 
-// Entry point
 cmdline : commands? EOF;
+commands: command (SEMICOLON command)*;
+command: pipe;
+pipe: call (PIPE call)*;
 
-commands : command (SEMICOLON command?)*;
+call: WS* (redirection WS)* argument (WS atom)* WS*;
+atom: redirection | argument;
+argument: (quoted | unquoted)+;
+redirection: REDIRECT_INPUT WS+ argument | REDIRECT_OUTPUT WS+ argument;
 
-command : pipe;
-// Pipe command
-pipe : call (PIPE call)*;
+quoted: singleQuoted | doubleQuoted | backQuoted;
 
-// Call command
-//call : CMD WS* redirection? (argument | atom | subcommand)* WS*;
-//call : cmd WS* (argument | atom | subcommand)* WS*;
-call : (cmd | redirection) WS* (argument | atom | subcommand)* WS*;
-
-cmd: SINGLE_QUOTED | DOUBLE_QUOTED | BACKQUOTED | UNQUOTED;// | redirection;
-
-subcommand : BACKQUOTED;// commands BACKQUOTED;
-
-atom : redirection | argument;
-
-argument : (quoted | unquoted)+;
-
-unquoted : UNQUOTED;
-
-quoted : SINGLE_QUOTED | DOUBLE_QUOTED | BACKQUOTED;
-
-redirection : REDIRECT_INPUT WS* argument | REDIRECT_OUTPUT WS* argument;
+unquoted: UNQUOTED;
+singleQuoted: SINGLE_QUOTE SQ_CONTENT SINGLE_QUOTE;
+doubleQuoted: DOUBLE_QUOTE DQ_CONTENT DOUBLE_QUOTE;
+backQuoted: BACK_QUOTE BQ_CONTENT BACK_QUOTE;
