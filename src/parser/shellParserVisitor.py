@@ -1,4 +1,4 @@
-# Generated from shellParser.g4 by ANTLR 4.13.1
+# Generated from shellParser.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .shellParser import shellParser
@@ -34,13 +34,8 @@ class shellParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by shellParser#cmd.
-    def visitCmd(self, ctx:shellParser.CmdContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by shellParser#subcommand.
-    def visitSubcommand(self, ctx:shellParser.SubcommandContext):
+    # Visit a parse tree produced by shellParser#argument.
+    def visitArgument(self, ctx:shellParser.ArgumentContext):
         return self.visitChildren(ctx)
 
 
@@ -49,13 +44,8 @@ class shellParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by shellParser#argument.
-    def visitArgument(self, ctx:shellParser.ArgumentContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by shellParser#unquoted.
-    def visitUnquoted(self, ctx:shellParser.UnquotedContext):
+    # Visit a parse tree produced by shellParser#redirection.
+    def visitRedirection(self, ctx:shellParser.RedirectionContext):
         return self.visitChildren(ctx)
 
 
@@ -64,8 +54,33 @@ class shellParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by shellParser#redirection.
-    def visitRedirection(self, ctx:shellParser.RedirectionContext):
+    # Visit a parse tree produced by shellParser#unquoted.
+    def visitUnquoted(self, ctx:shellParser.UnquotedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by shellParser#singleQuoted.
+    def visitSingleQuoted(self, ctx:shellParser.SingleQuotedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by shellParser#doubleQuoted.
+    def visitDoubleQuoted(self, ctx:shellParser.DoubleQuotedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by shellParser#content.
+    def visitContent(self, ctx:shellParser.ContentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by shellParser#backQuotedInDoubleQuoted.
+    def visitBackQuotedInDoubleQuoted(self, ctx:shellParser.BackQuotedInDoubleQuotedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by shellParser#backQuoted.
+    def visitBackQuoted(self, ctx:shellParser.BackQuotedContext):
         return self.visitChildren(ctx)
 
 
