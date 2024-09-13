@@ -32,10 +32,9 @@ public class shellLexer extends Lexer {
 
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"SINGLE_QUOTE", "DOUBLE_QUOTE", "BACK_QUOTE", "WS", "PIPE", "SEMICOLON", 
-			"REDIRECT_INPUT", "REDIRECT_OUTPUT", "UNQUOTED", "SQ_START", "DQ_START", 
-			"BQ_START", "SQ_CONTENT", "SQ_END", "DQ_CONTENT", "BQ_START_IN_DQ", "DQ_END", 
-			"BQ_CONTENT", "BQ_END"
+			"SQ", "DQ", "BQ", "WS", "PIPE", "SEMICOLON", "REDIRECT_INPUT", "REDIRECT_OUTPUT", 
+			"UNQUOTED", "SQ_START", "DQ_START", "BQ_START", "SQ_CONTENT", "SQ_END", 
+			"DQ_CONTENT", "BQ_START_IN_DQ", "DQ_END", "BQ_CONTENT", "BQ_END"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();

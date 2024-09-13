@@ -1,8 +1,8 @@
 lexer grammar shellLexer;
 
-fragment SINGLE_QUOTE: '\'';
-fragment DOUBLE_QUOTE: '"';
-fragment BACK_QUOTE: '`';
+fragment SQ: '\'';
+fragment DQ: '"';
+fragment BQ: '`';
 
 WS: [ \t\n]+ -> skip;
 
@@ -13,19 +13,19 @@ REDIRECT_OUTPUT: '>';
 
 UNQUOTED : ~[\n'"`<>;|\t ]+;
 
-SQ_START: SINGLE_QUOTE -> pushMode(SINGLE_QUOTE_MODE);
-DQ_START: DOUBLE_QUOTE -> pushMode(DOUBLE_QUOTE_MODE);
-BQ_START: BACK_QUOTE -> pushMode(BACK_QUOTE_MODE);
+SQ_START: SQ -> pushMode(SINGLE_QUOTE_MODE);
+DQ_START: DQ -> pushMode(DOUBLE_QUOTE_MODE);
+BQ_START: BQ -> pushMode(BACK_QUOTE_MODE);
 
 mode SINGLE_QUOTE_MODE;
 SQ_CONTENT: ~[\n']+;
-SQ_END: SINGLE_QUOTE -> popMode;
+SQ_END: SQ -> popMode;
 
 mode DOUBLE_QUOTE_MODE;
 DQ_CONTENT: ~[\n"`]+;
-BQ_START_IN_DQ: BACK_QUOTE -> pushMode(BACK_QUOTE_MODE);
-DQ_END: DOUBLE_QUOTE -> popMode;
+BQ_START_IN_DQ: BQ -> pushMode(BACK_QUOTE_MODE);
+DQ_END: DQ -> popMode;
 
 mode BACK_QUOTE_MODE;
 BQ_CONTENT: ~[\n`]+;
-BQ_END: BACK_QUOTE -> popMode;
+BQ_END: BQ -> popMode;
