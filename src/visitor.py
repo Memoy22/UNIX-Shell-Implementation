@@ -36,15 +36,20 @@ class ShellVisitor(ParseTreeVisitor):
         return left_command
 
     def visitCall(self, ctx: shellParser.CallContext):
-        cmd = self.visitArgument(ctx.argument())
+        cmd = self.visitArgument(ctx.argument()) if ctx.argument() else None
         arguments = []
-        redirections = []
         stdin = None
         stdout = None
 
+        # Visit and process redirections
         for redirection in ctx.redirection():
-            redirections.append(self.visitRedirection(redirection))
+            redir, arg = self.visitRedirection(redirection)
+            if redir == "stdin":
+                stdin = arg
+            else:
+                stdout = arg
 
+        # Process arguments and atoms
         for atom in ctx.atom():
             if atom.redirection():
                 redir, arg = self.visitRedirection(atom.redirection())
@@ -57,20 +62,11 @@ class ShellVisitor(ParseTreeVisitor):
 
         return Call(cmd=cmd, arguments=arguments, stdin=stdin, stdout=stdout)
 
-    def visitAtom(self, ctx: shellParser.AtomContext):
-        if ctx.argument():
-            return self.visitArgument(ctx.argument())
-        elif ctx.redirection():
-            return self.visitRedirection(ctx.redirection())
-
     def visitArgument(self, ctx: shellParser.ArgumentContext):
         if ctx.quoted():
             return self.visitQuoted(ctx.quoted())
         else:
             return self.visitUnquoted(ctx.unquoted())
-
-    def visitUnquoted(self, ctx: shellParser.UnquotedContext):
-        return ctx.UNQUOTED().getText()
 
     def visitQuoted(self, ctx: shellParser.QuotedContext):
         if ctx.singleQuoted():
@@ -84,22 +80,30 @@ class ShellVisitor(ParseTreeVisitor):
         return ctx.SQ_CONTENT().getText()
 
     def visitDoubleQuoted(self, ctx: shellParser.DoubleQuotedContext):
-        content = []
-        for part in ctx.content():
-            content.append(self.visitContent(part))
-        return "".join(content)
+        return self.visitContent(ctx.content())
 
     def visitContent(self, ctx: shellParser.ContentContext):
         if ctx.DQ_CONTENT():
-            return ctx.DQ_CONTENT().getText()
+            return "".join(
+                [dq_content.getText() for dq_content in ctx.DQ_CONTENT()])
         elif ctx.backQuotedInDoubleQuoted():
-            return self.visitBackQuotedInDoubleQuoted(ctx.backQuotedInDoubleQuoted())
+            return self.visitBackQuotedInDoubleQuoted(
+                ctx.backQuotedInDoubleQuoted())
+        return ""
 
     def visitBackQuotedInDoubleQuoted(self, ctx: shellParser.BackQuotedInDoubleQuotedContext):
-        return "`" + ctx.BQ_CONTENT().getText() + "`"
+        content = []
+        if hasattr(ctx, 'children'):
+            for child in ctx.children:
+                content.append(
+                    child.getText())  # Extract text for each child token
+        return "`" + "".join(content) + "`"
 
     def visitBackQuoted(self, ctx: shellParser.BackQuotedContext):
         return "`" + ctx.BQ_CONTENT().getText() + "`"
+
+    def visitUnquoted(self, ctx: shellParser.UnquotedContext):
+        return ctx.UNQUOTED().getText()
 
     def visitRedirection(self, ctx: shellParser.RedirectionContext):
         if ctx.REDIRECT_INPUT():
@@ -119,8 +123,8 @@ class ShellVisitor(ParseTreeVisitor):
         return res
 
 
-if __name__ == '__main__':
-    string = "echo foo bar < b.txt > a.txt"
+if __name__ == "__main__":
+    string = 'echo "`echo foo`"'
     visitor = ShellVisitor()
-    x = visitor.converter(string)
-    print(x, 'hello')
+    result = visitor.converter(string)
+    print(result)

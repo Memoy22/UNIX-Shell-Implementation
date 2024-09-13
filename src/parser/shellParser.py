@@ -10,7 +10,7 @@ else:
 
 def serializedATN():
     return [
-        4,1,19,111,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        4,1,16,111,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
         6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,
         2,14,7,14,1,0,3,0,32,8,0,1,0,1,0,1,1,1,1,1,1,5,1,39,8,1,10,1,12,
         1,42,9,1,1,2,1,2,1,3,1,3,1,3,5,3,49,8,3,10,3,12,3,52,9,3,1,4,5,4,
@@ -33,17 +33,17 @@ def serializedATN():
         0,61,60,1,0,0,0,62,65,1,0,0,0,63,61,1,0,0,0,63,64,1,0,0,0,64,9,1,
         0,0,0,65,63,1,0,0,0,66,69,3,16,8,0,67,69,3,18,9,0,68,66,1,0,0,0,
         68,67,1,0,0,0,69,11,1,0,0,0,70,73,3,14,7,0,71,73,3,10,5,0,72,70,
-        1,0,0,0,72,71,1,0,0,0,73,13,1,0,0,0,74,75,5,7,0,0,75,79,3,10,5,0,
-        76,77,5,8,0,0,77,79,3,10,5,0,78,74,1,0,0,0,78,76,1,0,0,0,79,15,1,
+        1,0,0,0,72,71,1,0,0,0,73,13,1,0,0,0,74,75,5,4,0,0,75,79,3,10,5,0,
+        76,77,5,5,0,0,77,79,3,10,5,0,78,74,1,0,0,0,78,76,1,0,0,0,79,15,1,
         0,0,0,80,84,3,20,10,0,81,84,3,22,11,0,82,84,3,28,14,0,83,80,1,0,
-        0,0,83,81,1,0,0,0,83,82,1,0,0,0,84,17,1,0,0,0,85,86,5,9,0,0,86,19,
-        1,0,0,0,87,88,5,10,0,0,88,89,5,11,0,0,89,90,5,12,0,0,90,21,1,0,0,
-        0,91,92,5,13,0,0,92,93,3,24,12,0,93,94,5,14,0,0,94,23,1,0,0,0,95,
-        98,5,15,0,0,96,98,3,26,13,0,97,95,1,0,0,0,97,96,1,0,0,0,98,101,1,
+        0,0,83,81,1,0,0,0,83,82,1,0,0,0,84,17,1,0,0,0,85,86,5,6,0,0,86,19,
+        1,0,0,0,87,88,5,7,0,0,88,89,5,10,0,0,89,90,5,11,0,0,90,21,1,0,0,
+        0,91,92,5,8,0,0,92,93,3,24,12,0,93,94,5,14,0,0,94,23,1,0,0,0,95,
+        98,5,12,0,0,96,98,3,26,13,0,97,95,1,0,0,0,97,96,1,0,0,0,98,101,1,
         0,0,0,99,97,1,0,0,0,99,100,1,0,0,0,100,25,1,0,0,0,101,99,1,0,0,0,
-        102,103,5,16,0,0,103,104,5,17,0,0,104,105,5,18,0,0,105,27,1,0,0,
-        0,106,107,5,19,0,0,107,108,5,17,0,0,108,109,5,18,0,0,109,29,1,0,
-        0,0,11,31,40,50,56,63,68,72,78,83,97,99
+        102,103,5,13,0,0,103,104,5,15,0,0,104,105,5,16,0,0,105,27,1,0,0,
+        0,106,107,5,9,0,0,107,108,5,15,0,0,108,109,5,16,0,0,109,29,1,0,0,
+        0,11,31,40,50,56,63,68,72,78,83,97,99
     ]
 
 class shellParser ( Parser ):
@@ -56,14 +56,12 @@ class shellParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "<INVALID>", "'|'", "';'", "<INVALID>", 
-                     "<INVALID>", "<INVALID>", "'<'", "'>'" ]
+    literalNames = [ "<INVALID>", "<INVALID>", "'|'", "';'", "'<'", "'>'" ]
 
-    symbolicNames = [ "<INVALID>", "WS", "PIPE", "SEMICOLON", "SINGLE_QUOTED", 
-                      "DOUBLE_QUOTED", "BACKQUOTED", "REDIRECT_INPUT", "REDIRECT_OUTPUT", 
-                      "UNQUOTED", "SQ_START", "SQ_CONTENT", "SQ_END", "DQ_START", 
-                      "DQ_END", "DQ_CONTENT", "BQ_START_IN_DQ", "BQ_CONTENT", 
-                      "BQ_END", "BQ_START" ]
+    symbolicNames = [ "<INVALID>", "WS", "PIPE", "SEMICOLON", "REDIRECT_INPUT", 
+                      "REDIRECT_OUTPUT", "UNQUOTED", "SQ_START", "DQ_START", 
+                      "BQ_START", "SQ_CONTENT", "SQ_END", "DQ_CONTENT", 
+                      "BQ_START_IN_DQ", "DQ_END", "BQ_CONTENT", "BQ_END" ]
 
     RULE_cmdline = 0
     RULE_commands = 1
@@ -90,22 +88,19 @@ class shellParser ( Parser ):
     WS=1
     PIPE=2
     SEMICOLON=3
-    SINGLE_QUOTED=4
-    DOUBLE_QUOTED=5
-    BACKQUOTED=6
-    REDIRECT_INPUT=7
-    REDIRECT_OUTPUT=8
-    UNQUOTED=9
-    SQ_START=10
-    SQ_CONTENT=11
-    SQ_END=12
-    DQ_START=13
+    REDIRECT_INPUT=4
+    REDIRECT_OUTPUT=5
+    UNQUOTED=6
+    SQ_START=7
+    DQ_START=8
+    BQ_START=9
+    SQ_CONTENT=10
+    SQ_END=11
+    DQ_CONTENT=12
+    BQ_START_IN_DQ=13
     DQ_END=14
-    DQ_CONTENT=15
-    BQ_START_IN_DQ=16
-    BQ_CONTENT=17
-    BQ_END=18
-    BQ_START=19
+    BQ_CONTENT=15
+    BQ_END=16
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -152,7 +147,7 @@ class shellParser ( Parser ):
             self.state = 31
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & 534400) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & 1008) != 0):
                 self.state = 30
                 self.commands()
 
@@ -379,7 +374,7 @@ class shellParser ( Parser ):
             self.state = 56
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==7 or _la==8:
+            while _la==4 or _la==5:
                 self.state = 53
                 self.redirection()
                 self.state = 58
@@ -391,7 +386,7 @@ class shellParser ( Parser ):
             self.state = 63
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 534400) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 1008) != 0):
                 self.state = 60
                 self.atom()
                 self.state = 65
@@ -442,12 +437,12 @@ class shellParser ( Parser ):
             self.state = 68
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [10, 13, 19]:
+            if token in [7, 8, 9]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 66
                 self.quoted()
                 pass
-            elif token in [9]:
+            elif token in [6]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 67
                 self.unquoted()
@@ -499,12 +494,12 @@ class shellParser ( Parser ):
             self.state = 72
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [7, 8]:
+            if token in [4, 5]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 70
                 self.redirection()
                 pass
-            elif token in [9, 10, 13, 19]:
+            elif token in [6, 7, 8, 9]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 71
                 self.argument()
@@ -558,14 +553,14 @@ class shellParser ( Parser ):
             self.state = 78
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [7]:
+            if token in [4]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 74
                 self.match(shellParser.REDIRECT_INPUT)
                 self.state = 75
                 self.argument()
                 pass
-            elif token in [8]:
+            elif token in [5]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 76
                 self.match(shellParser.REDIRECT_OUTPUT)
@@ -623,17 +618,17 @@ class shellParser ( Parser ):
             self.state = 83
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [10]:
+            if token in [7]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 80
                 self.singleQuoted()
                 pass
-            elif token in [13]:
+            elif token in [8]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 81
                 self.doubleQuoted()
                 pass
-            elif token in [19]:
+            elif token in [9]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 82
                 self.backQuoted()
@@ -830,15 +825,15 @@ class shellParser ( Parser ):
             self.state = 99
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==15 or _la==16:
+            while _la==12 or _la==13:
                 self.state = 97
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
-                if token in [15]:
+                if token in [12]:
                     self.state = 95
                     self.match(shellParser.DQ_CONTENT)
                     pass
-                elif token in [16]:
+                elif token in [13]:
                     self.state = 96
                     self.backQuotedInDoubleQuoted()
                     pass
