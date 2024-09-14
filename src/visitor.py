@@ -58,7 +58,11 @@ class ShellVisitor(ParseTreeVisitor):
                 else:
                     stdout = arg
             else:
-                arguments.append(self.visitArgument(atom.argument()))
+                argument = self.visitArgument(atom.argument())
+                if isinstance(argument, list):
+                    arguments.extend(argument)
+                else:
+                    arguments.append(argument)
 
         return Call(cmd=cmd, arguments=arguments, stdin=stdin, stdout=stdout)
 
@@ -83,26 +87,35 @@ class ShellVisitor(ParseTreeVisitor):
         return self.visitContent(ctx.content())
 
     def visitContent(self, ctx: shellParser.ContentContext):
-        if ctx.DQ_CONTENT():
-            return "".join(
-                [dq_content.getText() for dq_content in ctx.DQ_CONTENT()])
-        elif ctx.backQuotedInDoubleQuoted():
-            return self.visitBackQuotedInDoubleQuoted(
-                ctx.backQuotedInDoubleQuoted())
-        return ""
+        res = []
+        for child in ctx.getChildren():
+            if isinstance(child, shellParser.BackQuotedInDoubleQuotedContext):
+                res.extend(self.visitBackQuotedInDoubleQuoted(child))
+            else:
+                res.append(child.getText())
+        return res
 
-    def visitBackQuotedInDoubleQuoted(self, ctx: shellParser.BackQuotedInDoubleQuotedContext):
+    def visitBackQuotedInDoubleQuoted(self,
+                                      ctx: shellParser.BackQuotedInDoubleQuotedContext):
         content = []
-        if hasattr(ctx, 'children'):
-            for child in ctx.children:
-                content.append(
-                    child.getText())  # Extract text for each child token
-        return "`" + "".join(content) + "`"
+        # Traverse the children to handle both terminal nodes and parser rules
+        for child in ctx.getChildren():
+            bq_text = child.getText()  # Handle terminal nodes like `BQ_START_IN_DQ` and `BQ_END`
+            if bq_text == "`":
+                continue
+
+            content.append(self.visitBackQuoted(child))
+
+        return content
 
     def visitBackQuoted(self, ctx: shellParser.BackQuotedContext):
-        return "`" + ctx.BQ_CONTENT().getText() + "`"
+        bq_text = ctx.getText()
+        if bq_text[0] == bq_text[-1] == "`":
+            return self.converter(bq_text[1:-1])
+        return self.converter(ctx.getText())
 
-    def visitUnquoted(self, ctx: shellParser.UnquotedContext):
+    @staticmethod
+    def visitUnquoted(ctx: shellParser.UnquotedContext):
         return ctx.UNQUOTED().getText()
 
     def visitRedirection(self, ctx: shellParser.RedirectionContext):
@@ -111,7 +124,8 @@ class ShellVisitor(ParseTreeVisitor):
         elif ctx.REDIRECT_OUTPUT():
             return "stdout", self.visitArgument(ctx.argument())
 
-    def converter(self, input_stream="echo foo bar"):
+    @staticmethod
+    def converter(input_stream):
         input_stream = InputStream(input_stream)
         lexer = shellLexer(input_stream)
         token_stream = CommonTokenStream(lexer)
@@ -120,11 +134,11 @@ class ShellVisitor(ParseTreeVisitor):
 
         visitor = ShellVisitor()
         res = visitor.visit(tree)
+        print(res)
         return res
 
 
 if __name__ == "__main__":
-    string = 'echo "`echo foo`"'
+    string = 'echo a"b"c'
     visitor = ShellVisitor()
     result = visitor.converter(string)
-    print(result)
