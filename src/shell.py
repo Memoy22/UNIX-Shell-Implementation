@@ -1,10 +1,10 @@
 from visitor import ShellVisitor
-from handler import CommandHandler
+from collections import deque
 import sys
 import os
 
 
-def eval(cmdline):
+def eval(cmdline, out):
     """
     Evaluate the command line.
     Args:
@@ -14,14 +14,8 @@ def eval(cmdline):
     """
     if not cmdline:
         return eval("echo")
-    visitor = ShellVisitor()
-    call = visitor.get_call(cmdline)
 
-    handler = CommandHandler()
-    handler.process_call(call)
-
-    output = handler.get_out()
-    return output
+    return ShellVisitor.converter(cmdline).execute(out)
 
 
 def non_interactive_mode(args):
@@ -38,8 +32,10 @@ def non_interactive_mode(args):
 
 def interactive_mode():
     """ Run the shell in interactive mode. """
+    out = deque()
     print(os.getcwd() + "> ", end="")
-    out = eval(input())
+    eval(input(), out)
+
     while len(out) > 0:
         print(out.popleft(), end="")
 

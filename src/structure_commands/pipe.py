@@ -1,21 +1,17 @@
 from commands.command import Command
-from typing import Optional
-from collections import deque
+from structure_commands.call import Call
 
 
-class Pipe:
-    def __init__(self, left: Command, right: Command):
-        super().__init__()
+class Pipe(Command):
+    def __init__(self, left: Call, right: Call):
         self.left = left
         self.right = right
 
-    def eval(self, input_cmd: Optional[str], out: deque):
-        # Simulate pipe evaluation
-        temp_out = deque()
-        for command in self.commands:
-            command.eval(input_cmd, temp_out)
-        # Piped commands accumulate results, so we append the final output.
-        out.append(' | '.join(temp_out))
+    def execute(self, out):
+        res = self.left.execute()
+        if self.right.stdin is None:
+            self.right.stdin = res
+        self.right.execute(out)
 
     def __repr__(self):
         return f"Pipe(left={self.left} right={self.right})"

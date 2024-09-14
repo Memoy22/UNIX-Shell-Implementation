@@ -18,6 +18,7 @@ class Echo(Command):
         if args is None:
             return "\n"
         args = self.pre_process_args(args)
+        # print(args)
         return " ".join(args) + "\n"
 
     @staticmethod
