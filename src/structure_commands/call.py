@@ -1,5 +1,6 @@
 from commands.command import Command
 from command_factory import CommandFactory
+from utils import Validator, File
 
 
 class Call(Command):
@@ -8,11 +9,17 @@ class Call(Command):
         self.arguments = arguments
         self.stdin = stdin
         self.stdout = stdout
+        self.pipe_flag = True
 
     def execute(self, out=None):
         cmd = CommandFactory().get_command(self.cmd)
+
+        if self.stdin is not None and self.pipe_flag:
+            Validator.check_path_exists(self.stdin)
+            self.stdin = File(self.stdin).read_lines()
+
         res = cmd.execute(self.arguments, self.stdin)
-        if out is not None:
+        if out is not None and res is not None:
             out.append(res)
             return
         return res

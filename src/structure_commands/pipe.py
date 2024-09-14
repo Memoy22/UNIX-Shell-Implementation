@@ -11,6 +11,7 @@ class Pipe(Command):
         res = self.left.execute()
         if self.right.stdin is None:
             self.right.stdin = res
+            self.right.pipe_flag = False
         self.right.execute(out)
 
     def __repr__(self):
