@@ -39,7 +39,7 @@ class ShellVisitor(ParseTreeVisitor):
 
     def visitCall(self, ctx: shellParser.CallContext):
         cmd = self.visitArgument(ctx.argument()) if ctx.argument() else None
-        arguments = None
+        arguments = []
         stdin = None
         stdout = None
 
@@ -64,6 +64,7 @@ class ShellVisitor(ParseTreeVisitor):
                 else:
                     arguments.append(argument)
 
+        arguments = arguments if arguments else None
         return Call(cmd=cmd, arguments=arguments, stdin=stdin, stdout=stdout)
 
     def visitArgument(self, ctx: shellParser.ArgumentContext):
