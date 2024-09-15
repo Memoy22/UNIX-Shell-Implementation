@@ -3,6 +3,8 @@ import os
 import unittest
 from unittest.mock import patch
 
+from collections import deque
+
 from parameterized import parameterized
 
 from exceptions import (FlagError, InvalidFormatError,
@@ -22,6 +24,8 @@ class TestShell(unittest.TestCase):
     file2_content = ["ABCD", "EFGH", "IJKL", "MNOP"]
     empty_content = [""]
 
+    out = deque()
+
     @parameterized.expand(
         [
             # No files
@@ -34,17 +38,17 @@ class TestShell(unittest.TestCase):
             ([empty], empty_content),
         ]
     )
-    def test_cat(self, file_paths, expected_result):
-        out = eval(f"cat {' '.join(file_paths)}")
+    def test_cat(self, file_paths, expected_result, out=out):
+        eval(f"cat {' '.join(file_paths)}", out)
         result = out.popleft().strip().split("\n")
         self.assertEqual(result, expected_result)
 
-    def test_cat_no_file_exists(self):
+    def test_cat_no_file_exists(self, out):
         with self.assertRaises(FlagError):
-            eval("cat non_existing_file.txt")
+            eval("cat non_existing_file.txt", out)
 
-    def test_cat_out_redir(self):
-        eval(f"cat {self.file1} > out.txt")
+    def test_cat_out_redir(self, out):
+        eval(f"cat {self.file1} > out.txt", out)
         result = File("out.txt").read().strip().split("\n")
         self.assertEqual(result, self.file1_content)
 
@@ -58,13 +62,13 @@ class TestShell(unittest.TestCase):
             (empty, empty_content),
         ]
     )
-    def test_cat_in_redir(self, file_paths, expected_result):
-        out = eval(f"cat < {file_paths}")
+    def test_cat_in_redir(self, file_paths, expected_result, out):
+        out = eval(f"cat < {file_paths}", out)
         result = out.popleft().strip().split("\n")
         self.assertEqual(result, expected_result)
 
-    def test_cat_pipe(self):
-        out = eval(f"echo {self.test_files_dir}/*.txt | cat")
+    def test_cat_pipe(self, out):
+        out = eval(f"echo {self.test_files_dir}/*.txt | cat", out)
         result = out.popleft().strip().split(" ")
         result = set(result)
         self.assertEqual(
