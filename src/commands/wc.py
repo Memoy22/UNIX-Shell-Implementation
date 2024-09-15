@@ -56,7 +56,7 @@ class Wc(Command):
         if flags[2]:
             output.append(str(self.exec_m(lines)))
 
-        return " ".join(output) + "\n"
+        return " ".join(output)
 
     @staticmethod
     def process_flag(arg):

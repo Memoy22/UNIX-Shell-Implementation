@@ -89,6 +89,7 @@ class ShellVisitor(ParseTreeVisitor):
         for child in ctx.getChildren():
             if isinstance(child, shellParser.BackQuotedInDoubleQuotedContext):
                 res.extend(self.visitBackQuotedInDoubleQuoted(child))
+                res = [item.strip() for item in res]
             else:
                 res.append(child.getText())
         return res
@@ -103,14 +104,16 @@ class ShellVisitor(ParseTreeVisitor):
             # Handle terminal nodes like `BQ_START_IN_DQ` and `BQ_END`
             if bq_text == "`":
                 continue
-            content.append(self.visitBackQuoted(child))
+            content.extend(self.visitBackQuoted(child))
         return content
 
     def visitBackQuoted(self, ctx: shellParser.BackQuotedContext):
         bq_text = ctx.getText()
         if bq_text[0] == bq_text[-1] == "`":
-            return self.converter(bq_text[1:-1])
-        return self.converter(ctx.getText())
+            # print('here1')
+            return self.converter(bq_text[1:-1]).execute()
+        # print('here2')
+        return [self.converter(ctx.getText()).execute()]
 
     @staticmethod
     def visitUnquoted(ctx: shellParser.UnquotedContext):
@@ -132,5 +135,6 @@ class ShellVisitor(ParseTreeVisitor):
 
         visitor = ShellVisitor()
         res = visitor.visit(tree)
+        # print('res', res)
         return res
 

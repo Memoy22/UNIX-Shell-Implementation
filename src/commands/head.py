@@ -9,7 +9,7 @@ class Head(Command):
     def execute(self, args, stdin=None):
         n, lines = self.validate_flags(args, stdin)
         lines = [line.rstrip('\n') for line in lines]
-        return '\n'.join(lines[:n]) + '\n'
+        return '\n'.join(lines[:n])
 
     @staticmethod
     def validate_flags(args, stdin):

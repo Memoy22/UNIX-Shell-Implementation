@@ -40,4 +40,4 @@ class Grep(Command):
                 if re.search(pattern, line):
                     match_lines.append(line)
 
-        return "\n".join(match_lines) + "\n"
+        return "\n".join(match_lines)

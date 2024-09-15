@@ -25,7 +25,8 @@ def non_interactive_mode(args):
         raise ValueError("wrong number of command line arguments")
     if args[1] != "-c":
         raise ValueError(f"unexpected command line argument {args[1]}")
-    out = eval(args[2])
+    out = deque()
+    eval(args[2], out)
     while len(out) > 0:
         print(out.popleft(), end="")
 

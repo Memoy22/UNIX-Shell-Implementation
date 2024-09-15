@@ -10,7 +10,7 @@ class Sort(Command):
         rev, lines = self.validate_args(args, stdin)
         lines = [line.rstrip('\n') for line in lines]
         sorted_lines = sorted(lines, reverse=rev)
-        return '\n'.join(sorted_lines) + '\n'
+        return '\n'.join(sorted_lines)
 
     @staticmethod
     def validate_args(args, stdin):

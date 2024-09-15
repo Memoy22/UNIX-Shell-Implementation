@@ -14,13 +14,13 @@ class Cat(Command):
         Raises:
             FileNotFoundError: If the file does not exist.
         """
-        concat_output = ""
+        concat_output = []
         if args:
             for file_path in args:
                 Validator.check_path_exists(file_path)
-                concat_output += File(file_path).read()
+                concat_output.append(File(file_path).read())
         elif stdin is not None:
             for line in stdin:
                 concat_output += line
 
-        return concat_output + "\n"
+        return "".join(concat_output)

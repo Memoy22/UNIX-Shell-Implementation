@@ -9,7 +9,7 @@ class Uniq(Command):
     def execute(self, args, stdin=None):
         case_insensitive, lines = self.validate_args(args, stdin)
         lines = [line.rstrip("\n") for line in lines]
-        return '\n'.join(self.get_uniq(case_insensitive, lines)) + '\n'
+        return '\n'.join(self.get_uniq(case_insensitive, lines))
 
     @staticmethod
     def validate_args(args, stdin):

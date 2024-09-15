@@ -13,7 +13,7 @@ class Tail(Command):
 
         lines = [line.rstrip('\n') for line in lines]
         tail_lines = lines[-n:]
-        return '\n'.join(tail_lines) + '\n'
+        return '\n'.join(tail_lines)
 
     @staticmethod
     def validate_flags(args, stdin):

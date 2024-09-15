@@ -17,9 +17,9 @@ class Echo(Command):
     def execute(self, args, stdin=None):
         if args is None:
             return "\n"
-        args = self.pre_process_args(args)
+        # args = self.pre_process_args(args)
         # print(args)
-        return " ".join(args) + "\n"
+        return " ".join(args)
 
     @staticmethod
     def single_quotes_removal(args):

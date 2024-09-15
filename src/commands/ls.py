@@ -9,7 +9,7 @@ class Ls(Command):
     def execute(self, args, stdin=None):
         path = self.validate_args(args)
         files = [file for file in os.listdir(path) if not file.startswith('.')]
-        return '\t'.join(files) + '\n'
+        return '\t'.join(files)
 
     @staticmethod
     def validate_args(args):

@@ -8,9 +8,11 @@ class Seq(Command):
         self.left = left
         self.right = right
 
-    def execute(self, out):
-        self.left.execute(out)
-        self.right.execute(out)
+    def execute(self, out=None):
+        # print(self)
+        left = self.left.execute(out)
+        right = self.right.execute(out)
+        return [left, right]
 
     def __repr__(self):
         return f"Seq(left={self.left}, right={self.right})"

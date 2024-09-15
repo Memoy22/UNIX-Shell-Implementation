@@ -11,6 +11,7 @@ from commands.pwd import Pwd
 from commands.sort import Sort
 from commands.tail import Tail
 from commands.uniq import Uniq
+from commands.unsafe_command import UnsafeDecorator
 from commands.wc import Wc
 from exceptions import CommandNotFoundError
 
@@ -39,9 +40,14 @@ class CommandFactory:
         }
 
     def get_command(self, cmd):
+        if cmd.startswith("_") and cmd[1:] in self.command_factory:
+            cmd_obj = self.command_factory[cmd[1:]]
+            return UnsafeDecorator(cmd_obj())
+
         cmd_obj = self.command_factory.get(cmd)
         if cmd_obj is None:
             raise CommandNotFoundError("Error: Command Not Found")
+
         return cmd_obj()
 
     def is_command(self, cmd):

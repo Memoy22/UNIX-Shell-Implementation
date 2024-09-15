@@ -19,9 +19,14 @@ class Call(Command):
             self.stdin = File(self.stdin).read_lines()
 
         res = cmd.execute(self.arguments, self.stdin)
+
+        if self.stdout is not None:
+            File(self.stdout).write(res)
+            return
+
         if out is not None and res is not None:
             out.append(res)
-            return
+            out.append("\n")
         return res
 
     def __repr__(self):

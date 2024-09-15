@@ -10,7 +10,7 @@ class Find(Command):
     def execute(self, args, stdin=None):
         path, pattern = self.validate_flags(args)
         matched_files = self.find_files(path, pattern)
-        return '\n'.join(matched_files) + '\n'
+        return '\n'.join(matched_files)
 
     @staticmethod
     def validate_flags(args):

@@ -34,10 +34,12 @@ class Cut(Command):
         return option_range
 
     def execute(self, args, stdin=None):
+        # print(stdin)
         cut_options, lines = self.validate_flags(args, stdin)
-        lines = [line.rstrip('\n') for line in lines]
+        # lines = [line.rstrip('\n') for line in lines]
 
         output = []
+
         for line in lines:
             option_ranges = cut_options.split(',')
 
@@ -50,7 +52,8 @@ class Cut(Command):
             # slice the line as per merged cut-intervals
             output.append(''.join(self.slice_line(resultant_range, line)))
 
-        return '\n'.join(output) + '\n'
+        # print(output)
+        return '\n'.join(output)
 
     @staticmethod
     def validate_flags(args, stdin):
