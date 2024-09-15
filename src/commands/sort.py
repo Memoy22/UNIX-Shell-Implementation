@@ -7,8 +7,13 @@ from exceptions import FlagError
 class Sort(Command):
 
     def execute(self, args, stdin=None):
-        rev, lines = self.validate_args(args, stdin)
-        lines = [line.rstrip('\n') for line in lines]
+        rev, arguments = self.validate_args(args, stdin)
+        lines = []
+        for line in arguments:
+            lines.extend(line.strip('\n').split('\n'))
+        # print(lines)
+        # lines = [line.rstrip('\n') for line in lines]
+        # print(lines)
         sorted_lines = sorted(lines, reverse=rev)
         return '\n'.join(sorted_lines)
 

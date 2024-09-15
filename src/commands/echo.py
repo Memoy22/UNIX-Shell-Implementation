@@ -6,7 +6,7 @@ from commands.command import Command
 class Echo(Command):
 
     def pre_process_args(self, args):
-        args = self.single_quotes_removal(args)
+        # args = self.single_quotes_removal(args)
         expand = self.check_globbing(args)
         if expand:
             for index in expand:
@@ -17,7 +17,7 @@ class Echo(Command):
     def execute(self, args, stdin=None):
         if args is None:
             return "\n"
-        # args = self.pre_process_args(args)
+        args = self.pre_process_args(args)
         # print(args)
         return " ".join(args)
 

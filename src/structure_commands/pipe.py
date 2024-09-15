@@ -7,12 +7,16 @@ class Pipe(Command):
         self.left = left
         self.right = right
 
-    def execute(self, out):
+    def execute(self, out=None):
+
         res = self.left.execute()
         if self.right.stdin is None:
-            self.right.stdin = res
+            self.right.stdin = [res]
             self.right.pipe_flag = False
-        self.right.execute(out)
+
+        # print()
+        # print(self)
+        return self.right.execute(out)
 
     def __repr__(self):
         return f"Pipe(left={self.left} right={self.right})"

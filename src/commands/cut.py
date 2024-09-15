@@ -34,10 +34,9 @@ class Cut(Command):
         return option_range
 
     def execute(self, args, stdin=None):
-        # print(stdin)
         cut_options, lines = self.validate_flags(args, stdin)
-        # lines = [line.rstrip('\n') for line in lines]
 
+        lines = [line.rstrip('\n') for line in lines]
         output = []
 
         for line in lines:

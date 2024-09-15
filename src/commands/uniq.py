@@ -7,8 +7,12 @@ from exceptions import FlagError
 class Uniq(Command):
 
     def execute(self, args, stdin=None):
-        case_insensitive, lines = self.validate_args(args, stdin)
-        lines = [line.rstrip("\n") for line in lines]
+        # print(args, stdin)
+        case_insensitive, arguments = self.validate_args(args, stdin)
+        lines = []
+        for line in arguments:
+            lines.extend(line.strip('\n').split('\n'))
+        # lines = [line.rstrip("\n") for line in lines]
         return '\n'.join(self.get_uniq(case_insensitive, lines))
 
     @staticmethod
@@ -61,4 +65,5 @@ class Uniq(Command):
             if compare_line != prev_line:
                 result_lines.append(line)
                 prev_line = compare_line
+        # print(result_lines)
         return result_lines

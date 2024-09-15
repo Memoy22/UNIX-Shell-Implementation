@@ -135,6 +135,6 @@ class ShellVisitor(ParseTreeVisitor):
 
         visitor = ShellVisitor()
         res = visitor.visit(tree)
-        # print('res', res)
+        # print(res)
         return res
 
