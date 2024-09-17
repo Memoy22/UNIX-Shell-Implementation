@@ -13,7 +13,7 @@ def eval(cmdline, out):
         str: The output of the command line.
     """
     if not cmdline:
-        return eval("echo")
+        return eval("echo", out)
 
     return ShellVisitor.converter(cmdline).execute(out)
 
