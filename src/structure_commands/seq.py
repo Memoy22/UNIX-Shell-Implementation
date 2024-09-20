@@ -1,6 +1,5 @@
 from commands.command import Command
 from structure_commands.call import Call
-from collections import deque
 
 
 class Seq(Command):

@@ -11,7 +11,6 @@ class Tail(Command):
         if n == 0:
             return '\n'
 
-
         tail_lines = lines[-n:]
         return '\n'.join(tail_lines)
 
@@ -31,7 +30,9 @@ class Tail(Command):
         num_args = len(args) if args else 0
         n = 10
         if num_args == 0 and stdin is not None:
-            lines = [item for line in stdin for item in line.split("\n") if item]
+            lines = [
+                item for line in stdin for item in line.split("\n") if item
+            ]
         elif num_args == 1:
             Validator.check_path_exists(args[0])
             lines = File(args[0]).read_lines()
@@ -40,7 +41,9 @@ class Tail(Command):
             Validator.check_flag(args[0], "-n")
             Validator.check_string_isdigit(args[1])
             n = int(args[1])
-            lines = [item for line in stdin for item in line.split("\n") if item]
+            lines = [
+                item for line in stdin for item in line.split("\n") if item
+            ]
         elif num_args == 3:
             Validator.check_flag(args[0], "-n")
             Validator.check_string_isdigit(args[1])

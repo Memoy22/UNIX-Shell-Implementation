@@ -1,6 +1,6 @@
 from commands.command import Command
 from exceptions import FlagError
-from exceptions import InvalidFormatError
+from exceptions import FlagValueError
 from utils import File
 from utils import Validator
 
@@ -27,8 +27,9 @@ class Cut(Command):
                 option_range.append((left, right))
             else:
                 if not option.isdigit():
-                    raise InvalidFormatError("Error: Invalid cut option "
-                                             "format")
+                    raise FlagValueError(
+                        "Error: Invalid cut option format"
+                    )
                 num = int(option)
                 option_range.append((num, num))
         return option_range
@@ -68,7 +69,9 @@ class Cut(Command):
         if num_args == 2:
             Validator.check_flag(args[0], "-b")
             cut_options = args[1]
-            lines = [item for line in stdin for item in line.split("\n") if item]
+            lines = [
+                item for line in stdin for item in line.split("\n") if item
+            ]
         elif num_args == 3:
             Validator.check_flag(args[0], "-b")
             cut_options = args[1]
@@ -88,7 +91,7 @@ class Cut(Command):
             InvalidFormatError: If the range is not in the correct format.
         """
         if len(range_split) != 2:
-            raise InvalidFormatError("Error: Invalid cut option format")
+            raise FlagValueError("Error: Invalid cut option format")
         if range_split[0]:
             Validator.check_string_isdigit(range_split[0])
         if range_split[1]:

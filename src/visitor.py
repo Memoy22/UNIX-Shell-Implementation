@@ -4,7 +4,7 @@ from parser.shellParser import shellParser
 from structure_commands.pipe import Pipe
 from structure_commands.seq import Seq
 from structure_commands.call import Call
-from exceptions import MultipleRedirectionError
+from exceptions import StandardInputError
 
 
 def visitSingleQuoted(ctx: shellParser.SingleQuotedContext):
@@ -59,7 +59,9 @@ class ShellVisitor(ParseTreeVisitor):
                 elif redir == "stdout" and stdout is None:
                     stdout = arg
                 else:
-                    raise MultipleRedirectionError("Error: Multiple redirections given")
+                    raise StandardInputError(
+                        "Error: Multiple redirections given"
+                    )
             else:
                 argument = self.visitArgument(atom.argument())
                 if isinstance(argument, list):
@@ -139,4 +141,3 @@ class ShellVisitor(ParseTreeVisitor):
         visitor = ShellVisitor()
         res = visitor.visit(tree)
         return res
-

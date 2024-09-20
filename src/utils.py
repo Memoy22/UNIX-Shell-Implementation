@@ -1,6 +1,6 @@
 import os
 
-from exceptions import FlagError, InvalidFormatError
+from exceptions import FlagError, FlagValueError
 
 
 class File:
@@ -61,4 +61,4 @@ class Validator:
     def check_string_isdigit(char):
         msg = "Invalid flag argument. Expected digit(s)"
         if not char.isdigit():
-            raise InvalidFormatError(msg)
+            raise FlagValueError(msg)
