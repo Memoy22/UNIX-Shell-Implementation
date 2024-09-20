@@ -50,5 +50,6 @@ class CommandFactory:
 
         return cmd_obj()
 
+    @staticmethod
     def is_command(self, cmd):
         return cmd in self.command_factory

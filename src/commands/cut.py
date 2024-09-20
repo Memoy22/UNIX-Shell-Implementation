@@ -35,8 +35,6 @@ class Cut(Command):
 
     def execute(self, args, stdin=None):
         cut_options, lines = self.validate_flags(args, stdin)
-
-        lines = [line.rstrip('\n') for line in lines]
         output = []
 
         for line in lines:
@@ -51,7 +49,6 @@ class Cut(Command):
             # slice the line as per merged cut-intervals
             output.append(''.join(self.slice_line(resultant_range, line)))
 
-        # print(output)
         return '\n'.join(output)
 
     @staticmethod
@@ -71,12 +68,13 @@ class Cut(Command):
         if num_args == 2:
             Validator.check_flag(args[0], "-b")
             cut_options = args[1]
-            lines = stdin
+            lines = [item for line in stdin for item in line.split("\n") if item]
         elif num_args == 3:
             Validator.check_flag(args[0], "-b")
             cut_options = args[1]
             Validator.check_path_exists(args[2])
             lines = File(args[2]).read_lines()
+            lines = [line.rstrip('\n') for line in lines]
         else:
             raise FlagError("Error: Wrong number of flags given")
         return cut_options, lines

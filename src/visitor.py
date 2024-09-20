@@ -59,7 +59,7 @@ class ShellVisitor(ParseTreeVisitor):
                 elif redir == "stdout" and stdout is None:
                     stdout = arg
                 else:
-                    raise MultipleRedirectionError("Multiple redirections provided")
+                    raise MultipleRedirectionError("Error: Multiple redirections given")
             else:
                 argument = self.visitArgument(atom.argument())
                 if isinstance(argument, list):
@@ -138,6 +138,5 @@ class ShellVisitor(ParseTreeVisitor):
 
         visitor = ShellVisitor()
         res = visitor.visit(tree)
-        # print(res)
         return res
 

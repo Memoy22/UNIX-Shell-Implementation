@@ -15,8 +15,14 @@ class Call(Command):
         cmd = CommandFactory().get_command(self.cmd)
 
         if self.stdin is not None and self.pipe_flag:
-            Validator.check_path_exists(self.stdin)
-            self.stdin = File(self.stdin).read_lines()
+            if self.cmd.startswith("_"):
+                try:
+                    self.stdin = self.read_stdin()
+                except Exception as e:  # Add proper exception here
+                    out.append(f"{e}")
+                    return f"{e}"
+            else:
+                self.stdin = self.read_stdin()
 
         res = cmd.execute(self.arguments, self.stdin)
 
@@ -28,6 +34,10 @@ class Call(Command):
             out.append(res)
             out.append("\n")
         return res
+
+    def read_stdin(self):
+        Validator.check_path_exists(self.stdin)
+        return File(self.stdin).read_lines()
 
     def __repr__(self):
         return f"Call(cmd={self.cmd}, args={self.arguments} stdin={self.stdin} stdout={self.stdout})"

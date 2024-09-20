@@ -11,7 +11,7 @@ class Tail(Command):
         if n == 0:
             return '\n'
 
-        lines = [line.rstrip('\n') for line in lines]
+
         tail_lines = lines[-n:]
         return '\n'.join(tail_lines)
 
@@ -31,21 +31,23 @@ class Tail(Command):
         num_args = len(args) if args else 0
         n = 10
         if num_args == 0 and stdin is not None:
-            lines = stdin
+            lines = [item for line in stdin for item in line.split("\n") if item]
         elif num_args == 1:
             Validator.check_path_exists(args[0])
             lines = File(args[0]).read_lines()
+            lines = [line.rstrip('\n') for line in lines]
         elif num_args == 2:
             Validator.check_flag(args[0], "-n")
             Validator.check_string_isdigit(args[1])
             n = int(args[1])
-            lines = stdin
+            lines = [item for line in stdin for item in line.split("\n") if item]
         elif num_args == 3:
             Validator.check_flag(args[0], "-n")
             Validator.check_string_isdigit(args[1])
             n = int(args[1])
             Validator.check_path_exists(args[2])
             lines = File(args[2]).read_lines()
+            lines = [line.rstrip('\n') for line in lines]
         else:
             raise FlagError("Error: Wrong number of flags given")
         return n, lines
