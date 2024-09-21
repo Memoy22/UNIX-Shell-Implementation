@@ -1,5 +1,4 @@
 import glob
-
 from commands.command import Command
 
 

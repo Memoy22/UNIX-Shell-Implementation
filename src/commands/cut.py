@@ -1,8 +1,8 @@
 from commands.command import Command
 from exceptions import FlagError
 from exceptions import FlagValueError
-from utils import File
-from utils import Validator
+from src.utils.file import File
+from src.utils.validator import Validator
 
 
 class Cut(Command):

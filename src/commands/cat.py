@@ -1,6 +1,6 @@
 from commands.command import Command
-from utils import File
-from utils import Validator
+from src.utils.file import File
+from src.utils.validator import Validator
 
 
 class Cat(Command):

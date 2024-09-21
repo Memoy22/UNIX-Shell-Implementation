@@ -3,7 +3,7 @@ from collections import deque
 from parameterized import parameterized
 from exceptions import (FlagError, StandardInputError)
 from shell import eval
-from utils import File
+from src.utils.file import File
 
 
 def get_result(out, split_type="\n"):

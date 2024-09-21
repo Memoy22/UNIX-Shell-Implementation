@@ -3,7 +3,7 @@ import os
 from commands.command import Command
 from exceptions import FileAlreadyExistsError
 from exceptions import FlagError
-from utils import Validator
+from src.utils.validator import Validator
 
 
 class Mkdir(Command):

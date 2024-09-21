@@ -1,6 +1,7 @@
 from commands.command import Command
 from exceptions import FlagError
-from utils import File, Validator
+from src.utils.file import File
+from src.utils.validator import Validator
 
 
 class Wc(Command):

@@ -1,6 +1,7 @@
 from commands.command import Command
 from command_factory import CommandFactory
-from utils import Validator, File
+from src.utils.validator import Validator
+from src.utils.file import File
 
 
 class Call(Command):

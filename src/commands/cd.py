@@ -1,5 +1,5 @@
 from commands.command import Command
-from utils import Validator
+from src.utils.validator import Validator
 import os
 
 
