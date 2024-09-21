@@ -117,9 +117,8 @@ class ShellVisitor(ParseTreeVisitor):
     def visitBackQuoted(self, ctx: shellParser.BackQuotedContext):
         bq_text = ctx.getText()
         if bq_text[0] == bq_text[-1] == "`":
-            # print('here1')
             return self.converter(bq_text[1:-1]).execute()
-        # print('here2')
+
         return [self.converter(ctx.getText()).execute()]
 
     @staticmethod
