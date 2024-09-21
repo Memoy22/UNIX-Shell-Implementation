@@ -88,7 +88,7 @@ class TestFind(unittest.TestCase):
 
     def test_find_redir_out(self, out=deque()):
         eval(f"find -name 'find.txt' > {self.out_dir}", out)
-        result = File(self.out_dir).read().strip().split("\n")
+        result = File.read(self.out_dir).strip().split("\n")
         expected = ["./test/test_files/dir1/dir1_subdir1/find.txt"]
         self.assertEqual(result, expected)
 

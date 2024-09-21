@@ -33,19 +33,19 @@ class TestShell(unittest.TestCase):
         with self.assertRaises(CommandNotFoundError):
             eval("_wrong", out)
 
-    def test_shell_main(self, out=deque()):
+    def test_shell_main(self):
         with patch("sys.argv", new=["script_name", "-c", "echo"]):
             with patch("sys.stdout", new_callable=io.StringIO) as stdO:
                 main()
                 self.assertEqual(stdO.getvalue().strip(), "")
 
-    def test_shell_main_ValueError_0(self, out=deque()):
+    def test_shell_main_ValueError_0(self):
         with patch("sys.argv", new=["script_name", "echo foo bar", "-c"]):
             with patch("sys.stdout", new_callable=io.StringIO):
                 with self.assertRaises(ValueError):
                     main()
 
-    def test_shell_main_ValueError_1(self, out=deque()):
+    def test_shell_main_ValueError_1(self):
         with patch(
                 "sys.argv",
                 new=[
@@ -61,7 +61,7 @@ class TestShell(unittest.TestCase):
 
     @patch("builtins.input", return_value="echo")
     @patch("builtins.print")
-    def test_interactive_mode(self, mock_input, mock_print, out=deque()):
+    def test_interactive_mode(self):
         with io.StringIO() as buf, patch("sys.stdout", buf):
             interactive_mode()
             output = buf.getvalue()

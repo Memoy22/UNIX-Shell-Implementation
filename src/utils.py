@@ -4,30 +4,21 @@ from exceptions import FlagError, FlagValueError
 
 
 class File:
-    """
-    Class to read and write to files.
-    Args:
-        file (str): Path to the file.
-    Methods:
-        read_lines: Read all lines from the file and store in list.
-        read: Read the entire file and store in string.
-        write: Write to the file.
-    """
-    def __init__(self, file):
-        self.file = file
-
-    def read_lines(self):
-        with open(self.file, "r") as fin:
+    @staticmethod
+    def read_lines(file):
+        with open(file, "r") as fin:
             lines = fin.readlines()
         return lines
 
-    def read(self):
-        with open(self.file, "r") as fin:
+    @staticmethod
+    def read(file):
+        with open(file, "r") as fin:
             line = fin.read()
         return line
 
-    def write(self, output):
-        with open(self.file, "w") as fout:
+    @staticmethod
+    def write(file, output):
+        with open(file, "w") as fout:
             fout.write(output)
         return
 

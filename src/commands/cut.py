@@ -76,7 +76,7 @@ class Cut(Command):
             Validator.check_flag(args[0], "-b")
             cut_options = args[1]
             Validator.check_path_exists(args[2])
-            lines = File(args[2]).read_lines()
+            lines = File.read_lines(args[2])
             lines = [line.rstrip('\n') for line in lines]
         else:
             raise FlagError("Error: Wrong number of flags given")

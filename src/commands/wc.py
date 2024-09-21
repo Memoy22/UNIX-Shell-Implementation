@@ -97,7 +97,7 @@ class Wc(Command):
             Validator.check_path_exists(file)
         lines = []
         for file in files:
-            temp_lines = File(file).read_lines()
+            temp_lines = File.read_lines(file)
             lines += temp_lines
         return lines
 

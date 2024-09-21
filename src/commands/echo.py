@@ -6,7 +6,6 @@ from commands.command import Command
 class Echo(Command):
 
     def pre_process_args(self, args):
-        # args = self.single_quotes_removal(args)
         expand = self.check_globbing(args)
         if expand:
             for index in expand:
@@ -18,16 +17,8 @@ class Echo(Command):
         if args is None:
             return "\n"
         args = self.pre_process_args(args)
-        # print(args)
-        return " ".join(args)
 
-    @staticmethod
-    def single_quotes_removal(args):
-        """ Remove single quotes from the arguments."""
-        for index, arg in enumerate(args):
-            if arg[0] == arg[-1] == "'":
-                args[index] = arg[1:-1]
-        return args
+        return " ".join(args)
 
     @staticmethod
     def check_globbing(args):

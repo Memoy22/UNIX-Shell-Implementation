@@ -55,7 +55,7 @@ class TestLs(unittest.TestCase):
 
     def test_ls_redir_in(self, out=deque()):
         eval(f"ls test/test_files > {self.out_dir}", out)
-        result = File(self.out_dir).read().strip().split("\t")
+        result = File.read(self.out_dir).strip().split("\t")
         expected = {"dir1", "file2.txt", "empty.txt", "file1.txt", "out.txt"}
         self.assertEqual(set(result), expected)
 

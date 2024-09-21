@@ -7,12 +7,11 @@ from exceptions import FlagError
 class Uniq(Command):
 
     def execute(self, args, stdin=None):
-        # print(args, stdin)
         case_insensitive, arguments = self.validate_args(args, stdin)
         lines = []
         for line in arguments:
             lines.extend(line.strip('\n').split('\n'))
-        # lines = [line.rstrip("\n") for line in lines]
+
         return '\n'.join(self.get_uniq(case_insensitive, lines))
 
     @staticmethod
@@ -39,12 +38,12 @@ class Uniq(Command):
                 lines = stdin
             else:
                 Validator.check_path_exists(args[0])
-                lines = File(args[0]).read_lines()
+                lines = File.read_lines(args[0])
         elif num_args == 2:
             Validator.check_flag(args[0], "-i")
             case_insensitive = True
             Validator.check_path_exists(args[1])
-            lines = File(args[1]).read_lines()
+            lines = File.read_lines(args[1])
         else:
             raise FlagError("Error: Wrong number of flags given")
         return case_insensitive, lines
@@ -65,5 +64,5 @@ class Uniq(Command):
             if compare_line != prev_line:
                 result_lines.append(line)
                 prev_line = compare_line
-        # print(result_lines)
+
         return result_lines

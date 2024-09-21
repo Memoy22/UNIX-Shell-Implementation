@@ -95,7 +95,7 @@ class TestHead(unittest.TestCase):
 
     def test_head_redir_both(self, out=deque()):
         eval(f"head -n 2 < {self.file1} > out.txt", out)
-        result = File("out.txt").read().strip().split("\n")
+        result = File.read("out.txt").strip().split("\n")
         self.assertEqual(result, self.file1_content[:2])
 
     def test_redir_in_front_unsafe(self, out=deque()):

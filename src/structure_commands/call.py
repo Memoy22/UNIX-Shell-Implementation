@@ -27,7 +27,7 @@ class Call(Command):
         res = cmd.execute(self.arguments, self.stdin)
 
         if self.stdout is not None:
-            File(self.stdout).write(res)
+            File.write(self.stdout, res)
             return
 
         if out is not None and res is not None:
@@ -37,7 +37,7 @@ class Call(Command):
 
     def read_stdin(self):
         Validator.check_path_exists(self.stdin)
-        return File(self.stdin).read_lines()
+        return File.read_lines(self.stdin)
 
     def __repr__(self):
         return f"Call(cmd={self.cmd}, args={self.arguments} stdin={self.stdin} stdout={self.stdout})"

@@ -84,7 +84,7 @@ class TestEcho(unittest.TestCase):
 
     def test_echo_redir_out(self, out=deque()):
         eval(f"echo foo bar > {self.out_dir}", out)
-        result = File(self.out_dir).read().strip().split("\n")
+        result = File.read(self.out_dir).strip().split("\n")
         self.assertEqual(result, ["foo bar"])
 
     def test_echo_redir_in_file_not_exists(self, out=deque()):

@@ -18,7 +18,7 @@ class Cat(Command):
         if args:
             for file_path in args:
                 Validator.check_path_exists(file_path)
-                concat_output.append(File(file_path).read())
+                concat_output.append(File.read(file_path))
         elif stdin is not None:
             for line in stdin:
                 concat_output += line

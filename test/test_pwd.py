@@ -32,5 +32,5 @@ class TestPwd(unittest.TestCase):
 
     def test_pwd_redir_out(self, out=deque()):
         eval(f"pwd > {self.out_dir}", out)
-        result = File(self.out_dir).read().strip().split("\n")
+        result = File.read(self.out_dir).strip().split("\n")
         self.assertEqual(result, os.getcwd().strip().split("\n"))

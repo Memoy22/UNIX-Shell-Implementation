@@ -8,7 +8,6 @@ class Seq(Command):
         self.right = right
 
     def execute(self, out=None):
-        # print(self)
         left = self.left.execute(out)
         right = self.right.execute(out)
         return [left, right]

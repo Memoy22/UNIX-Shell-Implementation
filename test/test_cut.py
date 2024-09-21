@@ -70,7 +70,7 @@ class TestCut(unittest.TestCase):
 
     def test_cut_redir_out(self, out=deque()):
         eval(f"cut -b 2-4,3-5 {self.file1} > out.txt", out)
-        result = File("out.txt").read().strip().split("\n")
+        result = File.read("out.txt").strip().split("\n")
         self.assertEqual(result, ["orem", "psum", "olor"])
 
     def test_cut_unsafe(self, out=deque()):

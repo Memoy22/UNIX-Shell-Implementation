@@ -14,8 +14,6 @@ class Pipe(Command):
             self.right.stdin = [res]
             self.right.pipe_flag = False
 
-        # print(self.left)
-        # print(self.right)
         return self.right.execute(out)
 
     def __repr__(self):

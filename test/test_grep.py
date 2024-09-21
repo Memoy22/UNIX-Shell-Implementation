@@ -64,7 +64,7 @@ class TestGrep(unittest.TestCase):
 
     def test_grep_redir_out(self, out=deque()):
         eval(f"grep [a-z] {self.file1} > {self.out_dir}", out)
-        result = File(self.out_dir).read().strip().split("\n")
+        result = File.read(self.out_dir).strip().split("\n")
         self.assertEqual(result, self.file1_content)
 
     def test_grep_redir_in(self, out=deque()):

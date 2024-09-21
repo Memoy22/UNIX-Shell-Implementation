@@ -1,5 +1,4 @@
 import re
-
 from commands.command import Command
 from exceptions import FlagError
 from utils import File, Validator
@@ -28,7 +27,7 @@ class Grep(Command):
             multi_files = True if len(files) > 1 else False
             for file in files:
                 Validator.check_path_exists(file)
-                lines = File(file).read_lines()
+                lines = File.read_lines(file)
                 lines = [line.rstrip() for line in lines]
                 for line in lines:
                     if re.search(pattern, line):

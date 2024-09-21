@@ -11,9 +11,7 @@ class Sort(Command):
         lines = []
         for line in arguments:
             lines.extend(line.strip('\n').split('\n'))
-        # print(lines)
-        # lines = [line.rstrip('\n') for line in lines]
-        # print(lines)
+
         sorted_lines = sorted(lines, reverse=rev)
         return '\n'.join(sorted_lines)
 
@@ -40,12 +38,12 @@ class Sort(Command):
                 lines = stdin
             else:
                 Validator.check_path_exists(args[0])
-                lines = File(args[0]).read_lines()
+                lines = File.read_lines(args[0])
         elif num_args == 2:
             Validator.check_flag(args[0], "-r")
             rev = True
             Validator.check_path_exists(args[1])
-            lines = File(args[1]).read_lines()
+            lines = File.read_lines(args[1])
         else:
             raise FlagError("Error: Wrong number of flags given")
         return rev, lines

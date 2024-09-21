@@ -49,7 +49,7 @@ class TestCat(unittest.TestCase):
 
     def test_cat_out_redir(self, out=deque()):
         eval(f"cat {self.file1} > {self.out_dir}", out)
-        result = File(self.out_dir).read().strip().split("\n")
+        result = File.read(self.out_dir).strip().split("\n")
         self.assertEqual(result, self.file1_content)
 
     @parameterized.expand(

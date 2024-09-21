@@ -31,7 +31,7 @@ class Head(Command):
             ]
         elif num_args == 1:
             Validator.check_path_exists(args[0])
-            lines = File(args[0]).read_lines()
+            lines = File.read_lines(args[0])
             lines = [line.rstrip('\n') for line in lines]
         elif num_args == 2:
             Validator.check_flag(args[0], "-n")
@@ -45,7 +45,7 @@ class Head(Command):
             Validator.check_string_isdigit(args[1])
             n = int(args[1])
             Validator.check_path_exists(args[2])
-            lines = File(args[2]).read_lines()
+            lines = File.read_lines(args[2])
             lines = [line.rstrip('\n') for line in lines]
         else:
             raise FlagError("Error: Wrong number of flags given")
