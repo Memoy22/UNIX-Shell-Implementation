@@ -1,8 +1,8 @@
-from commands.command import Command
+from structure_commands.structure_command import StructureCommand
 from structure_commands.call import Call
 
 
-class Pipe(Command):
+class Pipe(StructureCommand):
     def __init__(self, left: Call, right: Call):
         self.left = left
         self.right = right

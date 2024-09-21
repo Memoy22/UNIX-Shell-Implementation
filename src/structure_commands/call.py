@@ -1,12 +1,12 @@
 from typing import Optional
 
-from commands.command import Command
+from structure_commands.structure_command import StructureCommand
 from command_factory import CommandFactory
 from utils.validator import Validator
 from utils.file import File
 
 
-class Call(Command):
+class Call(StructureCommand):
     def __init__(self, cmd: str, arguments: list[str], stdin: Optional[list[str]], stdout: Optional[list[str]]):
         self.cmd = cmd
         self.arguments = arguments
