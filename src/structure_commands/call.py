@@ -1,25 +1,27 @@
+from typing import Optional
+
 from commands.command import Command
 from command_factory import CommandFactory
-from src.utils.validator import Validator
-from src.utils.file import File
+from utils.validator import Validator
+from utils.file import File
 
 
 class Call(Command):
-    def __init__(self, cmd=None, arguments=None, stdin=None, stdout=None):
+    def __init__(self, cmd: str, arguments: list[str], stdin: Optional[list[str]], stdout: Optional[list[str]]):
         self.cmd = cmd
         self.arguments = arguments
         self.stdin = stdin
         self.stdout = stdout
         self.pipe_flag = True
 
-    def execute(self, out=None):
+    def execute(self, out=None) -> Optional[str]:
         cmd = CommandFactory().get_command(self.cmd)
 
         if self.stdin is not None and self.pipe_flag:
             if self.cmd.startswith("_"):
                 try:
                     self.stdin = self.read_stdin()
-                except Exception as e:  # Add proper exception here
+                except Exception as e:
                     out.append(f"{e}")
                     return f"{e}"
             else:
@@ -36,7 +38,7 @@ class Call(Command):
             out.append("\n")
         return res
 
-    def read_stdin(self):
+    def read_stdin(self) -> list[str]:
         Validator.check_path_exists(self.stdin)
         return File.read_lines(self.stdin)
 

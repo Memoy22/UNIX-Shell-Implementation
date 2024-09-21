@@ -1,12 +1,14 @@
+from typing import Optional
+
 from commands.command import Command
-from src.utils.file import File
-from src.utils.validator import Validator
+from utils.file import File
+from utils.validator import Validator
 from exceptions import FlagError
 
 
 class Tail(Command):
 
-    def execute(self, args, stdin=None):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
         n, lines = self.validate_flags(args, stdin)
         if n == 0:
             return '\n'
@@ -15,7 +17,7 @@ class Tail(Command):
         return '\n'.join(tail_lines)
 
     @staticmethod
-    def validate_flags(args, stdin):
+    def validate_flags(args, stdin) -> tuple[int, list[str]]:
         """
         Validate the flags given in the command line.
         Args:

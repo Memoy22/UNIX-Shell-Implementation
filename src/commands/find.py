@@ -1,19 +1,21 @@
+from typing import Optional, Generator
+
 from commands.command import Command
 from exceptions import FlagError
-from src.utils.validator import Validator
+from utils.validator import Validator
 import os
 import fnmatch
 
 
 class Find(Command):
 
-    def execute(self, args, stdin=None):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
         path, pattern = self.validate_flags(args)
         matched_files = self.find_files(path, pattern)
         return '\n'.join(matched_files)
 
     @staticmethod
-    def validate_flags(args):
+    def validate_flags(args) -> tuple[str, str]:
         """ Validate the flags given in the command line.
         Args:
             args (list): List of arguments given in the command line.
@@ -39,7 +41,7 @@ class Find(Command):
         return path, pattern
 
     @staticmethod
-    def find_files(path, pattern):
+    def find_files(path: str, pattern: str) -> Generator[str, None, None]:
         """ Find files in the given path that match the pattern.
         Args:
             path (str): Path to search for files.

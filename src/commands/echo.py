@@ -1,10 +1,19 @@
 import glob
+from typing import Optional
+
 from commands.command import Command
 
 
 class Echo(Command):
 
-    def pre_process_args(self, args):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+        if args is None:
+            return "\n"
+        args = self.pre_process_args(args)
+
+        return " ".join(args)
+
+    def pre_process_args(self, args) -> list[str]:
         expand = self.check_globbing(args)
         if expand:
             for index in expand:
@@ -12,15 +21,8 @@ class Echo(Command):
                     args = args[:index] + expand[index] + args[index + 1:]
         return args
 
-    def execute(self, args, stdin=None):
-        if args is None:
-            return "\n"
-        args = self.pre_process_args(args)
-
-        return " ".join(args)
-
     @staticmethod
-    def check_globbing(args):
+    def check_globbing(args) -> dict[int, list[str]]:
         expand = {}
         for index, arg in enumerate(args):
             if "*" in arg:

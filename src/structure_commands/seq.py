@@ -7,7 +7,7 @@ class Seq(Command):
         self.left = left
         self.right = right
 
-    def execute(self, out=None):
+    def execute(self, out=None) -> list[str]:
         left = self.left.execute(out)
         right = self.right.execute(out)
         return [left, right]

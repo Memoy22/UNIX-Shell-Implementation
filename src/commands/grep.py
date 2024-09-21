@@ -1,12 +1,14 @@
 import re
+from typing import Optional
+
 from commands.command import Command
 from exceptions import FlagError
-from src.utils.file import File
-from src.utils.validator import Validator
+from utils.file import File
+from utils.validator import Validator
 
 
 class Grep(Command):
-    def execute(self, args, stdin=None):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
         """ Execute the grep command.
         Args:
             args (list): List of arguments given in the command line.

@@ -1,12 +1,14 @@
+from typing import Optional
+
 from commands.command import Command
-from src.utils.file import File
-from src.utils.validator import Validator
+from utils.file import File
+from utils.validator import Validator
 from exceptions import FlagError
 
 
 class Sort(Command):
 
-    def execute(self, args, stdin=None):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str :
         rev, arguments = self.validate_args(args, stdin)
         lines = []
         for line in arguments:
@@ -16,7 +18,7 @@ class Sort(Command):
         return '\n'.join(sorted_lines)
 
     @staticmethod
-    def validate_args(args, stdin):
+    def validate_args(args, stdin) -> tuple[bool, list[str]]:
         """ Validate the arguments given in the command line.
         Args:
             args (list): List of arguments given in the command line.

@@ -2,7 +2,7 @@ import os
 import unittest
 from collections import deque
 from shell import eval
-from src.utils.file import File
+from utils.file import File
 
 
 def get_result(out, split_type="\n"):

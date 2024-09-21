@@ -1,12 +1,14 @@
+from typing import Optional
+
 from commands.command import Command
 from exceptions import FlagError
-from src.utils.file import File
-from src.utils.validator import Validator
+from utils.file import File
+from utils.validator import Validator
 
 
 class Wc(Command):
 
-    def validate_args(self, args, stdin):
+    def validate_args(self, args, stdin) -> tuple[tuple[bool, bool, bool], list[str]]:
         """
         Validate the arguments given in the command line.
         Args:
@@ -36,7 +38,7 @@ class Wc(Command):
 
         return (l, w, m), lines
 
-    def execute(self, args, stdin):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
         """ Execute the wc command.
         Args:
             args (list): List of arguments given in the command line.
@@ -60,7 +62,7 @@ class Wc(Command):
         return " ".join(output)
 
     @staticmethod
-    def process_flag(arg):
+    def process_flag(arg) -> tuple[bool, bool, bool]:
         """
         Process the flag given in the command line.
         Args:
@@ -84,7 +86,7 @@ class Wc(Command):
         return l_flag, w_flag, m_flag
 
     @staticmethod
-    def process_files(files):
+    def process_files(files) -> list[str]:
         """
         Process the files by checking path and reading them.
         Args:
@@ -107,7 +109,7 @@ class Wc(Command):
         return len(lines)
 
     @staticmethod
-    def exec_w(lines):
+    def exec_w(lines) -> int:
         words = 0
         for line in lines:
             temp_words = len(line.split(" "))
@@ -115,7 +117,7 @@ class Wc(Command):
         return words
 
     @staticmethod
-    def exec_m(lines):
+    def exec_m(lines) -> int:
         chars = 0
         for line in lines:
             temp_chars = len(line)

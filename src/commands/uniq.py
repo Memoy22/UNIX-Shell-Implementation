@@ -1,12 +1,14 @@
+from typing import Optional
+
 from commands.command import Command
-from src.utils.file import File
-from src.utils.validator import Validator
+from utils.file import File
+from utils.validator import Validator
 from exceptions import FlagError
 
 
 class Uniq(Command):
 
-    def execute(self, args, stdin=None):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
         case_insensitive, arguments = self.validate_args(args, stdin)
         lines = []
         for line in arguments:
@@ -15,7 +17,7 @@ class Uniq(Command):
         return '\n'.join(self.get_uniq(case_insensitive, lines))
 
     @staticmethod
-    def validate_args(args, stdin):
+    def validate_args(args, stdin) -> tuple[bool, list[str]]:
         """
         Validate the arguments given in the command line.
         Args:
@@ -49,7 +51,7 @@ class Uniq(Command):
         return case_insensitive, lines
 
     @staticmethod
-    def get_uniq(case_insensitive, lines):
+    def get_uniq(case_insensitive, lines) -> list[str]:
         """ Get the unique lines from the given lines.
         Args:
             case_insensitive (bool): Flag to ignore case.

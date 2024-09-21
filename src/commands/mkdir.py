@@ -1,14 +1,15 @@
 import os
+from typing import Optional
 
 from commands.command import Command
 from exceptions import FileAlreadyExistsError
 from exceptions import FlagError
-from src.utils.validator import Validator
+from utils.validator import Validator
 
 
 class Mkdir(Command):
 
-    def execute(self, args, stdin):
+    def execute(self, args: list[str], stdin: Optional[list[str]]) -> None:
         p, dirs = self.validate_args(args)
         for dir in dirs:
             if Validator.check_path_exists_bool(dir):
@@ -27,7 +28,7 @@ class Mkdir(Command):
         raise FileAlreadyExistsError(msg)
 
     @staticmethod
-    def validate_args(args):
+    def validate_args(args) -> tuple[bool, list[str]]:
         """ Validate the arguments given in the command line.
         Args:
             args (list): List of arguments given in the command line.
