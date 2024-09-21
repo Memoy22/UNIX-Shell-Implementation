@@ -17,10 +17,6 @@ from exceptions import CommandNotFoundError
 
 
 class CommandFactory:
-    """
-    Factory class for commands.
-    This class is responsible for creating command objects.
-    """
     def __init__(self):
         self.command_factory = {
             "pwd": Pwd,

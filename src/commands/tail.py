@@ -19,12 +19,6 @@ class Tail(Command):
     @staticmethod
     def validate_flags(args, stdin) -> tuple[int, list[str]]:
         """
-        Validate the flags given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            tuple: Tuple containing the flag n and lines from files or stdin.
         Raises:
             FlagError: If the flag given is not -n.
             FlagError: If the file does not exist.

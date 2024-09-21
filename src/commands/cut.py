@@ -29,12 +29,8 @@ class Cut(Command):
 
     @staticmethod
     def validate_flags(args, stdin) -> tuple[str, list[str]]:
-        """ Validate the flags given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            tuple: Tuple containing the cut options and lines
+        """
+        Validate the flags given in the command line.
         Raises:
             FlagError: If the flag given is not -b.
             FlagError: If the file does not exist.
@@ -58,20 +54,16 @@ class Cut(Command):
         return cut_options, lines
 
     def pre_process_ranges(self, option_ranges: list[str], line_len: int) -> list[tuple[int, int]]:
-        """ Pre-process the ranges given in the cut options.
-        Args:
-            option_ranges (list): List of strings containing the ranges.
-            line_len (int): Length of the line.
-        Returns:
-            list: List containing the processed ranges.
+        """
+        Changes cut bytes option_ranges into indices for slicing
         Raises:
-            InvalidFormatError: If the range is not in the correct format.
+            FlagValueError: If the range is not in the correct format.
         """
         option_range = []
         for option in option_ranges:
             if '-' in option:
                 range_split = option.split('-')
-                self.check_range_format(range_split)
+                self.is_range_format_valid(range_split)
                 left = int(range_split[0]) if range_split[0] else 0
                 right = int(range_split[1]) if range_split[1] else line_len
                 option_range.append((left, right))
@@ -85,13 +77,7 @@ class Cut(Command):
         return option_range
 
     @staticmethod
-    def check_range_format(range_split: list[str]) -> None:
-        """ Check if the given range is valid.
-        Args:
-            range_split (list): List of strings containing the range.
-        Raises:
-            InvalidFormatError: If the range is not in the correct format.
-        """
+    def is_range_format_valid(range_split: list[str]) -> None:
         if len(range_split) != 2:
             raise FlagValueError("Error: Invalid cut option format")
         if range_split[0]:
@@ -100,17 +86,14 @@ class Cut(Command):
             Validator.check_string_isdigit(range_split[1])
 
     @staticmethod
-    def merge_intervals(option_range: list[tuple[int, int]]) -> list[tuple[int, int]]:
-        """ Merge the overlapping intervals.
-        Args:
-            option_range (list): List containing the processed ranges.
-        Returns:
-            list: List containing the merged ranges.
+    def merge_intervals(option_ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
         """
-        option_range.sort()
-        start, end = option_range[0]
+        Merge the overlapping cut option ranges to get distinct cut bytes
+        """
+        option_ranges.sort()
+        start, end = option_ranges[0]
         resultant_range = []
-        for curr_start, curr_end in option_range[1:]:
+        for curr_start, curr_end in option_ranges[1:]:
             if end < curr_start:
                 resultant_range.append((start, end))
                 start = curr_start
@@ -120,13 +103,6 @@ class Cut(Command):
 
     @staticmethod
     def slice_line(resultant_range: list[tuple[int, int]], line: str) -> list[str]:
-        """ Slice the line as per the merged cut-intervals.
-        Args:
-            resultant_range (list): List containing the merged ranges.
-            line (str): Line to be sliced.
-        Returns:
-            list: List containing the sliced line.
-        """
         result_line = []
         for cur_range in resultant_range:
             cut_left = cur_range[0] - 1 if cur_range[0] != 0 else 0

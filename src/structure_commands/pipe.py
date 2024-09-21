@@ -10,10 +10,13 @@ class Pipe(Command):
     def execute(self, out = None) -> str:
 
         res = self.left.execute()
+
+        # Only assign pipe to stdin if no prior stdin is given
         if self.right.stdin is None:
             self.right.stdin = [res]
             self.right.pipe_flag = False
 
+        # return right call result for nested structure commands
         return self.right.execute(out)
 
     def __repr__(self):

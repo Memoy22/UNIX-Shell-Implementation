@@ -17,6 +17,7 @@ class Call(Command):
     def execute(self, out=None) -> Optional[str]:
         cmd = CommandFactory().get_command(self.cmd)
 
+        # Read stdin if it is not from pipe
         if self.stdin is not None and self.pipe_flag:
             if self.cmd.startswith("_"):
                 try:
@@ -29,6 +30,7 @@ class Call(Command):
 
         res = cmd.execute(self.arguments, self.stdin)
 
+        # If stdout is given, write and return early
         if self.stdout is not None:
             File.write(self.stdout, res)
             return

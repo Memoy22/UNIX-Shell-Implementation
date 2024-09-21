@@ -9,11 +9,11 @@ class Echo(Command):
     def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
         if args is None:
             return "\n"
-        args = self.pre_process_args(args)
+        args = self.pre_process_globbing_in_args(args)
 
         return " ".join(args)
 
-    def pre_process_args(self, args) -> list[str]:
+    def pre_process_globbing_in_args(self, args) -> list[str]:
         expand = self.check_globbing(args)
         if expand:
             for index in expand:

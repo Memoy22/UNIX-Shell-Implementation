@@ -16,11 +16,7 @@ class Find(Command):
 
     @staticmethod
     def validate_flags(args) -> tuple[str, str]:
-        """ Validate the flags given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-        Returns:
-            tuple: Tuple containing the path and pattern to search for.
+        """
         Raises:
             FlagError: If the number of flags given is not 2 or 3.
             FlagError: If the flag given is not -name.
@@ -42,12 +38,8 @@ class Find(Command):
 
     @staticmethod
     def find_files(path: str, pattern: str) -> Generator[str, None, None]:
-        """ Find files in the given path that match the pattern.
-        Args:
-            path (str): Path to search for files.
-            pattern (str): Pattern to search for.
-        Returns:
-            generator: Generator containing the files that match the pattern.
+        """
+        Find files in the given path that match the pattern.
         """
         for dirpath, dirnames, filenames in os.walk(path):
             for filename in fnmatch.filter(filenames, pattern):

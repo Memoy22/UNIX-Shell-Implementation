@@ -29,11 +29,7 @@ class Mkdir(Command):
 
     @staticmethod
     def validate_args(args) -> tuple[bool, list[str]]:
-        """ Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-        Returns:
-            tuple: Tuple containing the flags and directories.
+        """
         Raises:
             FlagError: If the flag given is not -p.
             FlagError: If the directory already exists.

@@ -44,6 +44,7 @@ class ShellVisitor(ParseTreeVisitor):
         stdin = None
         stdout = None
 
+        # Check if there is redir in the beginning
         for redirection in ctx.redirection():
             redir, arg = self.visitRedirection(redirection)
             if redir == "stdin":
@@ -51,6 +52,7 @@ class ShellVisitor(ParseTreeVisitor):
             else:
                 stdout = arg
 
+        # For each atom check if it is redir or arg and visit accordingly
         for atom in ctx.atom():
             if atom.redirection():
                 redir, arg = self.visitRedirection(atom.redirection())

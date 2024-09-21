@@ -19,12 +19,7 @@ class Sort(Command):
 
     @staticmethod
     def validate_args(args, stdin) -> tuple[bool, list[str]]:
-        """ Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            tuple: Tuple containing the rev flag and lines from files or stdin.
+        """
         Raises:
             FlagError: If the flag given is not -r.
             FlagError: If the file does not exist.

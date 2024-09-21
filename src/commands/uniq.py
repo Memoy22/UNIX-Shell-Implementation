@@ -19,12 +19,6 @@ class Uniq(Command):
     @staticmethod
     def validate_args(args, stdin) -> tuple[bool, list[str]]:
         """
-        Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            tuple: Tuple containing the flags and lines from files or stdin.
         Raises:
             FlagError: If the flag given is not -i.
             FlagError: If the file does not exist.
@@ -52,12 +46,8 @@ class Uniq(Command):
 
     @staticmethod
     def get_uniq(case_insensitive, lines) -> list[str]:
-        """ Get the unique lines from the given lines.
-        Args:
-            case_insensitive (bool): Flag to ignore case.
-            lines (list): List of lines to get unique lines from.
-        Returns:
-            list: List of unique lines.
+        """
+        Get the unique lines from the given lines.
         """
         result_lines = []
         prev_line = None

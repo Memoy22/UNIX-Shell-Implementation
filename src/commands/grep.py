@@ -9,12 +9,7 @@ from utils.validator import Validator
 
 class Grep(Command):
     def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
-        """ Execute the grep command.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            str: Lines that match the pattern.
+        """
         Raises:
             FlagError: If the number of flags given is not 1.
             FlagError: If the file does not exist.

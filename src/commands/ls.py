@@ -15,11 +15,7 @@ class Ls(Command):
 
     @staticmethod
     def validate_args(args) -> str:
-        """ Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-        Returns:
-            str: Path given in the command line.
+        """
         Raises:
             FlagError: If the number of flags given is not 1.
         """

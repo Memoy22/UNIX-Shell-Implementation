@@ -8,43 +8,12 @@ from utils.validator import Validator
 
 class Wc(Command):
 
-    def validate_args(self, args, stdin) -> tuple[tuple[bool, bool, bool], list[str]]:
-        """
-        Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            tuple: Tuple containing the flags and lines from files or stdin.
-        Raises:
-            FlagError: If the flag given is not -l, -w, or -m.
-            FlagError: If the file does not exist.
-            FlagError: If the wrong number of arguments are given
-        """
-        l, w, m = True, True, True
-        num_args = len(args) if args else 0
-        if num_args == 0 and stdin is not None:
-            lines = stdin
-        elif num_args > 0:
-            if args[0].startswith("-"):
-                l, w, m = self.process_flag(args[0])
-                lines = self.process_files(args[1:])
-                if not lines:
-                    lines = stdin
-            else:
-                lines = self.process_files(args)
-        else:
-            raise FlagError("Error: Wrong number of arguments given")
-
-        return (l, w, m), lines
-
     def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
-        """ Execute the wc command.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            str: The output of the wc command.
+        """
+        Execute the wc command:
+        -l: counts lines
+        -w: counts words (separated by whitespaces)
+        -m: counts characters (including whitespaces and newlines)
         """
         temp = self.validate_args(args, stdin)
         flags = temp[0]
@@ -61,14 +30,34 @@ class Wc(Command):
 
         return " ".join(output)
 
-    @staticmethod
-    def process_flag(arg) -> tuple[bool, bool, bool]:
+    def validate_args(self, args, stdin) -> tuple[tuple[bool, bool, bool], list[str]]:
         """
-        Process the flag given in the command line.
-        Args:
-            arg (str): Flag given in the command line.
-        Returns:
-            tuple: Tuple containing the flags for l, w, m.
+        Raises:
+            FlagError: If the flag given is not -l, -w, or -m.
+            FlagError: If the file does not exist.
+            FlagError: If the wrong number of arguments are given
+        """
+        l, w, m = True, True, True
+        num_args = len(args) if args else 0
+        if num_args == 0 and stdin is not None:
+            lines = stdin
+        elif num_args > 0:
+            if args[0].startswith("-"):
+                l, w, m = self.validate_flags(args[0])
+                lines = self.validate_files(args[1:])
+                if not lines:
+                    lines = stdin
+            else:
+                lines = self.validate_files(args)
+        else:
+            raise FlagError("Error: Wrong number of arguments given")
+
+        return (l, w, m), lines
+
+    @staticmethod
+    def validate_flags(arg) -> tuple[bool, bool, bool]:
+        """
+        Validate the flags given in the command line
         Raises:
             FlagError: If the flag given is not -l, -w, or -m.
         """
@@ -86,13 +75,9 @@ class Wc(Command):
         return l_flag, w_flag, m_flag
 
     @staticmethod
-    def process_files(files) -> list[str]:
+    def validate_files(files) -> list[str]:
         """
-        Process the files by checking path and reading them.
-        Args:
-            files (list): List of files given in the command line.
-        Returns:
-            list: List of lines from all the files.
+        Validate the files by checking path and reading them.
         Raises:
             FlagError: If the file does not exist.
         """

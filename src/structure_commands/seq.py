@@ -10,6 +10,8 @@ class Seq(Command):
     def execute(self, out=None) -> list[str]:
         left = self.left.execute(out)
         right = self.right.execute(out)
+
+        # return left and right calls for nested structure commands
         return [left, right]
 
     def __repr__(self):
