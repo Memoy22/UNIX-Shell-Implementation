@@ -11,8 +11,14 @@ class Seq(StructureCommand):
         left = self.left.execute(out)
         right = self.right.execute(out)
 
-        # return left and right calls for nested structure commands
+        # return left and right calls for substituted seq structure commands
         return [left, right]
 
-    def __repr__(self):
-        return f"Seq(left={self.left}, right={self.right})"
+    def __str__(self):
+        left_str = str(self.left).replace("\n", "\n    ")
+        right_str = str(self.right).replace("\n", "\n    ")
+
+        return (f"Seq(\n"
+                f"    left={left_str},\n"
+                f"    right={right_str}\n"
+                f")")

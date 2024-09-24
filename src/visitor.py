@@ -4,11 +4,7 @@ from parser.shellParser import shellParser
 from structure_commands.pipe import Pipe
 from structure_commands.seq import Seq
 from structure_commands.call import Call
-from exceptions import StandardInputError
-
-
-def visitSingleQuoted(ctx: shellParser.SingleQuotedContext):
-    return ctx.SQ_CONTENT().getText()
+from exceptions import RedirectionError
 
 
 class ShellVisitor(ParseTreeVisitor):
@@ -61,7 +57,7 @@ class ShellVisitor(ParseTreeVisitor):
                 elif redir == "stdout" and stdout is None:
                     stdout = arg
                 else:
-                    raise StandardInputError(
+                    raise RedirectionError(
                         "Error: Multiple redirections given"
                     )
             else:
@@ -82,7 +78,7 @@ class ShellVisitor(ParseTreeVisitor):
 
     def visitQuoted(self, ctx: shellParser.QuotedContext):
         if ctx.singleQuoted():
-            return visitSingleQuoted(ctx.singleQuoted())
+            return self.visitSingleQuoted(ctx.singleQuoted())
         elif ctx.doubleQuoted():
             return self.visitDoubleQuoted(ctx.doubleQuoted())
         else:
@@ -120,6 +116,10 @@ class ShellVisitor(ParseTreeVisitor):
             return self.converter(bq_text[1:-1]).execute()
 
         return [self.converter(ctx.getText()).execute()]
+
+    @staticmethod
+    def visitSingleQuoted(ctx: shellParser.SingleQuotedContext):
+        return ctx.SQ_CONTENT().getText()
 
     @staticmethod
     def visitUnquoted(ctx: shellParser.UnquotedContext):

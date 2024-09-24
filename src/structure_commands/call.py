@@ -44,5 +44,10 @@ class Call(StructureCommand):
         Validator.check_path_exists(self.stdin)
         return File.read_lines(self.stdin)
 
-    def __repr__(self):
-        return f"Call(cmd={self.cmd}, args={self.arguments} stdin={self.stdin} stdout={self.stdout})"
+    def __str__(self):
+        return (f"Call(\n"
+                f"    cmd={self.cmd},\n"
+                f"    args={self.arguments},\n"
+                f"    stdin={self.stdin},\n"
+                f"    stdout={self.stdout}\n"
+                f")")

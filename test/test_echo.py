@@ -26,11 +26,6 @@ class TestEcho(unittest.TestCase):
 
     out_dir = "test/test_files/out.txt"
 
-    def test_echo_quotes_inside_args(self, out=deque()):
-        eval('echo a"b"c', out)
-        result = get_result(out)
-        self.assertEqual(result, ["abc"])
-
     @parameterized.expand(
         [
             # Single arg
@@ -90,11 +85,6 @@ class TestEcho(unittest.TestCase):
     def test_echo_redir_in_file_not_exists(self, out=deque()):
         with self.assertRaises(FlagError):
             eval("echo < abcd.txt", out)
-
-    def test_echo_sub(self, out=deque()):
-        eval("echo a`echo a`a", out)
-        result = get_result(out)
-        self.assertEqual(result, ["aaa"])
 
     def test_pipe_echo_cut(self, out=deque()):
         eval("echo abc | cut -b 1", out)

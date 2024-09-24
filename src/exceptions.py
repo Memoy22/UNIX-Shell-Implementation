@@ -1,4 +1,4 @@
-class StandardInputError(Exception):
+class RedirectionError(Exception):
     pass
 
 

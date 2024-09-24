@@ -1,7 +1,7 @@
 import unittest
 from collections import deque
 from parameterized import parameterized
-from exceptions import (FlagError, StandardInputError)
+from exceptions import (FlagError, RedirectionError)
 from shell import eval
 from utils.file import File
 
@@ -85,11 +85,11 @@ class TestCat(unittest.TestCase):
         )
 
     def test_multi_redir_in(self, out=deque()):
-        with self.assertRaises(StandardInputError):
+        with self.assertRaises(RedirectionError):
             eval(f"cat < {self.file1} < {self.file2}", out)
 
     def test_multi_redir_out(self, out=deque()):
-        with self.assertRaises(StandardInputError):
+        with self.assertRaises(RedirectionError):
             eval(
                 f"cat {self.empty} > {self.file1} > {self.file2}", out
             )
@@ -101,7 +101,7 @@ class TestCat(unittest.TestCase):
     #     self.assertEqual(result, [msg])
 
     def test_multi_redir_in_out(self, out=deque()):
-        with self.assertRaises(StandardInputError):
+        with self.assertRaises(RedirectionError):
             eval(
                 f"cat {self.file1}"
                 f"< {self.file1} < {self.file2}"
