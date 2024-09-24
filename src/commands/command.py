@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class Command(ABC):
-    """ Abstract class for all commands."""
     @abstractmethod
-    def execute(self, args, stdin):
+    def execute(self, args: list[str], stdin: str | list[str]):
         pass

@@ -1,23 +1,21 @@
+from typing import Optional
+
 from commands.command import Command
-from utils import Validator
+from utils.validator import Validator
 from exceptions import FlagError
 import os
 
 
 class Ls(Command):
 
-    def execute(self, args, stdin=None):
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
         path = self.validate_args(args)
         files = [file for file in os.listdir(path) if not file.startswith('.')]
-        return '\t'.join(files) + '\n'
+        return '\t'.join(files)
 
     @staticmethod
-    def validate_args(args):
-        """ Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-        Returns:
-            str: Path given in the command line.
+    def validate_args(args) -> str:
+        """
         Raises:
             FlagError: If the number of flags given is not 1.
         """

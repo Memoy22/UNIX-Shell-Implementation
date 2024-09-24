@@ -1,27 +1,31 @@
 lexer grammar shellLexer;
 
-// Whitespace
-WS : [ \t\r\n]+ -> skip;
+fragment SQ: '\'';
+fragment DQ: '"';
+fragment BQ: '`';
 
-// Keywords
-PIPE : '|';
-SEMICOLON : ';';
+WS: [ \t\n]+ -> skip;
 
-// Command substitution
-SINGLE_QUOTED : '\'' (~['\n])* '\'';
-DOUBLE_QUOTED : '"' (~["\n`] | '\\' .)* '"';
-BACKQUOTED : '`' (~[`\n] | '\\' .)* '`';
+PIPE: '|';
+SEMICOLON: ';';
+REDIRECT_INPUT: '<';
+REDIRECT_OUTPUT: '>';
 
-// Redirection
-REDIRECT_INPUT : '<';
-REDIRECT_OUTPUT : '>';
+UNQUOTED : ~[\n'"`<>;|\t ]+;
 
-// Call command
-//UNQUOTED : UNQUOTED;
+SQ_START: SQ -> pushMode(SINGLE_QUOTE_MODE);
+DQ_START: DQ -> pushMode(DOUBLE_QUOTE_MODE);
+BQ_START: BQ -> pushMode(BACK_QUOTE_MODE);
 
-// Unquoted text
-UNQUOTED : ~[\n|<> ; \t`]+;
+mode SINGLE_QUOTE_MODE;
+SQ_CONTENT: ~[\n']+;
+SQ_END: SQ -> popMode;
 
-fragment BACKSLASH : '\\';
-fragment LETTER: [a-zA-Z];
-fragment UNSAFE: '_';
+mode DOUBLE_QUOTE_MODE;
+DQ_CONTENT: ~[\n"`]+;
+BQ_START_IN_DQ: BQ -> pushMode(BACK_QUOTE_MODE);
+DQ_END: DQ -> popMode;
+
+mode BACK_QUOTE_MODE;
+BQ_CONTENT: ~[\n`]+;
+BQ_END: BQ -> popMode;

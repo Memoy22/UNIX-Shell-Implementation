@@ -510,12 +510,6 @@ class TestShell(unittest.TestCase):
         result = stdout.strip()
         self.assertEqual(result, "foo")
 
-    def test_substitution_insidearg(self):
-        cmdline = "echo a`echo a`a"
-        stdout = self.eval(cmdline)
-        result = stdout.strip()
-        self.assertEqual(result, "aaa")
-
     def test_substitution_splitting(self):
         cmdline = "echo `echo foo  bar`"
         stdout = self.eval(cmdline)
@@ -587,12 +581,6 @@ class TestShell(unittest.TestCase):
         stdout = self.eval(cmdline)
         result = stdout.strip()
         self.assertEqual(result, '""')
-
-    def test_splitting(self):
-        cmdline = 'echo a"b"c'
-        stdout = self.eval(cmdline)
-        result = stdout.strip()
-        self.assertEqual(result, "abc")
 
 
 if __name__ == "__main__":

@@ -1,45 +1,32 @@
 from visitor import ShellVisitor
-from handler import CommandHandler
+from collections import deque
 import sys
 import os
 
 
-def eval(cmdline):
-    """
-    Evaluate the command line.
-    Args:
-        cmdline (str): The command line to evaluate.
-    Returns:
-        str: The output of the command line.
-    """
+def eval(cmdline, out):
     if not cmdline:
-        return eval("echo")
-    visitor = ShellVisitor()
-    call = visitor.get_call(cmdline)
+        return
 
-    handler = CommandHandler()
-    handler.process_call(call)
-
-    output = handler.get_out()
-    return output
+    return ShellVisitor.converter(cmdline).execute(out)
 
 
 def non_interactive_mode(args):
-    """ Run the shell in non-interactive mode. """
-
     if len(args) - 1 != 2:
         raise ValueError("wrong number of command line arguments")
     if args[1] != "-c":
         raise ValueError(f"unexpected command line argument {args[1]}")
-    out = eval(args[2])
+    out = deque()
+    eval(args[2], out)
     while len(out) > 0:
         print(out.popleft(), end="")
 
 
 def interactive_mode():
-    """ Run the shell in interactive mode. """
+    out = deque()
     print(os.getcwd() + "> ", end="")
-    out = eval(input())
+    eval(input(), out)
+
     while len(out) > 0:
         print(out.popleft(), end="")
 

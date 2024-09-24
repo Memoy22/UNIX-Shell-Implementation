@@ -1,4 +1,4 @@
-class MultipleRedirectionError(Exception):
+class RedirectionError(Exception):
     pass
 
 
@@ -10,7 +10,7 @@ class FlagError(Exception):
     pass
 
 
-class InvalidFormatError(Exception):
+class FlagValueError(Exception):
     pass
 
 

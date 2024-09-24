@@ -1,18 +1,15 @@
 import re
+from typing import Optional
 
 from commands.command import Command
 from exceptions import FlagError
-from utils import File, Validator
+from utils.file import File
+from utils.validator import Validator
 
 
 class Grep(Command):
-    def execute(self, args, stdin=None):
-        """ Execute the grep command.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            str: Lines that match the pattern.
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+        """
         Raises:
             FlagError: If the number of flags given is not 1.
             FlagError: If the file does not exist.
@@ -28,7 +25,7 @@ class Grep(Command):
             multi_files = True if len(files) > 1 else False
             for file in files:
                 Validator.check_path_exists(file)
-                lines = File(file).read_lines()
+                lines = File.read_lines(file)
                 lines = [line.rstrip() for line in lines]
                 for line in lines:
                     if re.search(pattern, line):
@@ -40,4 +37,4 @@ class Grep(Command):
                 if re.search(pattern, line):
                     match_lines.append(line)
 
-        return "\n".join(match_lines) + "\n"
+        return "\n".join(match_lines)

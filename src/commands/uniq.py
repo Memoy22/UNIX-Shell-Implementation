@@ -1,25 +1,24 @@
+from typing import Optional
+
 from commands.command import Command
-from utils import File
-from utils import Validator
+from utils.file import File
+from utils.validator import Validator
 from exceptions import FlagError
 
 
 class Uniq(Command):
 
-    def execute(self, args, stdin=None):
-        case_insensitive, lines = self.validate_args(args, stdin)
-        lines = [line.rstrip("\n") for line in lines]
-        return '\n'.join(self.get_uniq(case_insensitive, lines)) + '\n'
+    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+        case_insensitive, arguments = self.validate_args(args, stdin)
+        lines = []
+        for line in arguments:
+            lines.extend(line.strip('\n').split('\n'))
+
+        return '\n'.join(self.get_uniq(case_insensitive, lines))
 
     @staticmethod
-    def validate_args(args, stdin):
+    def validate_args(args, stdin) -> tuple[bool, list[str]]:
         """
-        Validate the arguments given in the command line.
-        Args:
-            args (list): List of arguments given in the command line.
-            stdin (list): List of lines from standard input.
-        Returns:
-            tuple: Tuple containing the flags and lines from files or stdin.
         Raises:
             FlagError: If the flag given is not -i.
             FlagError: If the file does not exist.
@@ -35,24 +34,20 @@ class Uniq(Command):
                 lines = stdin
             else:
                 Validator.check_path_exists(args[0])
-                lines = File(args[0]).read_lines()
+                lines = File.read_lines(args[0])
         elif num_args == 2:
             Validator.check_flag(args[0], "-i")
             case_insensitive = True
             Validator.check_path_exists(args[1])
-            lines = File(args[1]).read_lines()
+            lines = File.read_lines(args[1])
         else:
             raise FlagError("Error: Wrong number of flags given")
         return case_insensitive, lines
 
     @staticmethod
-    def get_uniq(case_insensitive, lines):
-        """ Get the unique lines from the given lines.
-        Args:
-            case_insensitive (bool): Flag to ignore case.
-            lines (list): List of lines to get unique lines from.
-        Returns:
-            list: List of unique lines.
+    def get_uniq(case_insensitive, lines) -> list[str]:
+        """
+        Get the unique lines from the given lines.
         """
         result_lines = []
         prev_line = None
@@ -61,4 +56,5 @@ class Uniq(Command):
             if compare_line != prev_line:
                 result_lines.append(line)
                 prev_line = compare_line
+
         return result_lines

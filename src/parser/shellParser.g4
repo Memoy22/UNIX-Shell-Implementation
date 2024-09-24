@@ -1,33 +1,26 @@
 parser grammar shellParser;
 
 options {
-  tokenVocab=ShellLexer;
+  tokenVocab=shellLexer;
 }
 
-// Entry point
-cmdline : commands? EOF;
+cmdline: commands? EOF;
+commands: command (SEMICOLON command)*;
+command: pipe;
+pipe: call (PIPE call)*;
 
-commands : command (SEMICOLON command?)*;
+call: (redirection)* argument (atom)* ;
+argument: quoted | unquoted;
+atom: redirection | argument;
+redirection: REDIRECT_INPUT argument | REDIRECT_OUTPUT argument;
 
-command : pipe;
-// Pipe command
-pipe : call (PIPE call)*;
+quoted: singleQuoted | doubleQuoted | backQuoted;
+unquoted: UNQUOTED;
 
-// Call command
-//call : CMD WS* redirection? (argument | atom | subcommand)* WS*;
-//call : cmd WS* (argument | atom | subcommand)* WS*;
-call : (cmd | redirection) WS* (argument | atom | subcommand)* WS*;
+singleQuoted: SQ_START SQ_CONTENT SQ_END;
 
-cmd: SINGLE_QUOTED | DOUBLE_QUOTED | BACKQUOTED | UNQUOTED;// | redirection;
+doubleQuoted: DQ_START content DQ_END;
+content: (DQ_CONTENT | backQuotedInDoubleQuoted)*;
+backQuotedInDoubleQuoted: BQ_START_IN_DQ BQ_CONTENT BQ_END;
 
-subcommand : BACKQUOTED;// commands BACKQUOTED;
-
-atom : redirection | argument;
-
-argument : (quoted | unquoted)+;
-
-unquoted : UNQUOTED;
-
-quoted : SINGLE_QUOTED | DOUBLE_QUOTED | BACKQUOTED;
-
-redirection : REDIRECT_INPUT WS* argument | REDIRECT_OUTPUT WS* argument;
+backQuoted: BQ_START BQ_CONTENT BQ_END;

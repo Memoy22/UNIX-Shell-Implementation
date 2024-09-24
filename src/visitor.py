@@ -1,266 +1,145 @@
 from antlr4 import CommonTokenStream, InputStream, ParseTreeVisitor
-
 from parser.shellLexer import shellLexer
 from parser.shellParser import shellParser
+from structure_commands.pipe import Pipe
+from structure_commands.seq import Seq
+from structure_commands.call import Call
+from exceptions import RedirectionError
 
 
 class ShellVisitor(ParseTreeVisitor):
     def visitCmdline(self, ctx: shellParser.CmdlineContext):
-        return self.visit(ctx.commands())
+        if ctx.commands():
+            return self.visitCommands(ctx.commands())
+        return None
 
     def visitCommands(self, ctx: shellParser.CommandsContext):
-        command_results = [self.visit(command) for command in ctx.command()]
-        return command_results
+        left_command = self.visitCommand(ctx.command(0))
+
+        for i in range(1, len(ctx.command())):
+            right_command = self.visitCommand(ctx.command(i))
+            left_command = Seq(left=left_command, right=right_command)
+
+        return left_command
 
     def visitCommand(self, ctx: shellParser.CommandContext):
-        return self.visit(ctx.pipe())
+        return self.visitPipe(ctx.pipe())
 
     def visitPipe(self, ctx: shellParser.PipeContext):
-        commands = [self.visit(call) for call in ctx.call()]
-        return commands
+        left_command = self.visitCall(ctx.call(0))
+
+        for i in range(1, len(ctx.call())):
+            right_command = self.visitCall(ctx.call(i))
+            left_command = Pipe(left=left_command, right=right_command)
+
+        return left_command
 
     def visitCall(self, ctx: shellParser.CallContext):
-        """
-        Visit a call node and return a dictionary with the call information.
-        The dictionary will have the following keys:
-        - cmd: The command to be executed
-        - arguments: A list of arguments to be passed to the command
-        - subcommands: A list of subcommands to be executed
-        - inputFile: The file to be used as input
-        - outputFile: The file to be used as output
-        """
-        cmd = self.visit(ctx.cmd()) if ctx.cmd() else None
-        arguments = [self.visit(arg) for arg in ctx.argument()] or None
-        subcommands = [self.visit(subcmd) for subcmd in
-                       ctx.subcommand()] or None
-        input_file, output_file = self.getRedirections(ctx)
+        cmd = self.visitArgument(ctx.argument()) if ctx.argument() else None
+        arguments = []
+        stdin = None
+        stdout = None
 
-        call = {
-            "cmd": cmd,
-            "arguments": arguments,
-            "subcommands": subcommands,
-            "inputFile": input_file,
-            "outputFile": output_file,
-        }
-        if call["cmd"] is None and call["inputFile"] is not None:
-            call["cmd"] = "<"
-            call["arguments"] = [call["inputFile"]]
-            call["inputFile"] = None
+        # Check if there is redir in the beginning
+        for redirection in ctx.redirection():
+            redir, arg = self.visitRedirection(redirection)
+            if redir == "stdin":
+                stdin = arg
+            else:
+                stdout = arg
 
-        return call
+        # For each atom check if it is redir or arg and visit accordingly
+        for atom in ctx.atom():
+            if atom.redirection():
+                redir, arg = self.visitRedirection(atom.redirection())
+                if redir == "stdin" and stdin is None:
+                    stdin = arg
+                elif redir == "stdout" and stdout is None:
+                    stdout = arg
+                else:
+                    raise RedirectionError(
+                        "Error: Multiple redirections given"
+                    )
+            else:
+                argument = self.visitArgument(atom.argument())
+                if isinstance(argument, list):
+                    arguments.extend(argument)
+                else:
+                    arguments.append(argument)
 
-    def getRedirections(self, ctx):
-        """Get the input and output files for the call."""
-        redirections = self.handleRedirection(ctx)
-
-        inputFile = [
-                        redirection[1] for redirection in redirections if
-                        redirection[0] == "<"
-                    ] or None
-        outputFile = [
-                         redirection[1] for redirection in redirections if
-                         redirection[0] == ">"
-                     ] or None
-
-        inputFile = (
-            inputFile[0] if inputFile is not None and len(
-                inputFile) == 1 else inputFile
-        )
-        outputFile = (
-            outputFile[0]
-            if outputFile is not None and len(outputFile) == 1
-            else outputFile
-        )
-        return inputFile, outputFile
-
-    def visitRedirection(self, ctx: shellParser.RedirectionContext):
-        redirect_type = ctx.children[0].getText()
-        argument = self.visit(ctx.argument())
-        return redirect_type, argument
-
-    def handleRedirection(self, ctx: shellParser.CallContext):
-        """
-        Handle redirections in the call.
-        Redirections can be in the beginning of the call or in the middle.
-        """
-        redirections = []
-
-        for child in ctx.children:
-            # To handle redirection in beginning like '> hi.txt'
-            if isinstance(child, shellParser.RedirectionContext):
-                redirection_ctx = child
-                redirection = self.visit(
-                    redirection_ctx) if redirection_ctx else None
-                redirections.append(redirection)
-                break
-            # To handle usual redirection cases
-            elif isinstance(child, shellParser.AtomContext):
-                for atom_child in child.children:
-                    if isinstance(atom_child, shellParser.RedirectionContext):
-                        redirection_ctx = atom_child
-                        redirection = (
-                            self.visit(
-                                redirection_ctx) if redirection_ctx else None
-                        )
-                        redirections.append(redirection)
-                        break
-        return redirections
-
-    def visitCmd(self, ctx: shellParser.CmdContext):
-        if ctx.SINGLE_QUOTED():
-            return ctx.SINGLE_QUOTED().getText()[1:-1]
-        elif ctx.DOUBLE_QUOTED():
-            return ctx.DOUBLE_QUOTED().getText()[1:-1]
-        elif ctx.BACKQUOTED():
-            return ctx.BACKQUOTED().getText()
-        elif ctx.UNQUOTED():
-            return ctx.UNQUOTED().getText()
-        else:
-            return self.visit(ctx.redirection())
-
-    def visitSubcommand(self, ctx: shellParser.SubcommandContext):
-        return self.visit(ctx.commands())
+        arguments = arguments if arguments else None
+        return Call(cmd=cmd, arguments=arguments, stdin=stdin, stdout=stdout)
 
     def visitArgument(self, ctx: shellParser.ArgumentContext):
-        arguments = []
+        if ctx.quoted():
+            return self.visitQuoted(ctx.quoted())
+        else:
+            return self.visitUnquoted(ctx.unquoted())
 
-        for arg in ctx.children:
-            if isinstance(arg, shellParser.QuotedContext):
-                arguments.append(self.visit(arg))
-            elif isinstance(arg, shellParser.UnquotedContext):
-                unquoted_arg = self.visit(arg)
-                arguments.append(unquoted_arg)
-        return arguments
+    def visitQuoted(self, ctx: shellParser.QuotedContext):
+        if ctx.singleQuoted():
+            return self.visitSingleQuoted(ctx.singleQuoted())
+        elif ctx.doubleQuoted():
+            return self.visitDoubleQuoted(ctx.doubleQuoted())
+        else:
+            return self.visitBackQuoted(ctx.backQuoted())
 
-    def clean_args(self, cmd_line):
-        """
-        Clean the arguments in the command line.
-        The arguments are cleaned by removing the quotes from the arguments.
-        """
-        for command in cmd_line:
-            for call_dict in command:
-                echo_flag = True if call_dict["cmd"] == "echo" else False
-                call_dict["arguments"] = self.filter_args(
-                    call_dict["arguments"], echo_flag
-                )
-        return cmd_line
+    def visitDoubleQuoted(self, ctx: shellParser.DoubleQuotedContext):
+        return self.visitContent(ctx.content())
 
-    def get_sub_call(self, cmd_line):
-        """
-        Get the subcommands from the command line.
-        The subcommands are stored in the subcommands key of dictionary.
-        """
-        for command in cmd_line:
-            for call_dict in command:
-                if call_dict["arguments"] is not None:
-                    for index, args in enumerate(call_dict["arguments"]):
-                        if len(args) > 0 and args[0] == args[-1] == "`":
-                            sub_cmdline = self.converter(args[1:-1])
-                            sub_cmdline = self.clean_args(sub_cmdline)
-                            call_dict["subcommands"] = {}
-                            call_dict["subcommands"][index] = sub_cmdline
-        return cmd_line
+    def visitContent(self, ctx: shellParser.ContentContext):
+        res = []
+        for child in ctx.getChildren():
+            if isinstance(child, shellParser.BackQuotedInDoubleQuotedContext):
+                res.extend(self.visitBackQuotedInDoubleQuoted(child))
+                res = [item.strip() for item in res]
+            else:
+                res.append(child.getText())
+        return res
 
-    def get_cmd_get_call(self, call_dict):
-        """
-        Get the command from a sub call.
-        The command is stored in the cmd key of the call dictionary.
-        """
-        cmd_from_sub_call = self.converter(call_dict["cmd"][1:-1])
-        cmd_from_sub_call = self.clean_args(cmd_from_sub_call)
-        call_dict["cmd"] = cmd_from_sub_call
+    def visitBackQuotedInDoubleQuoted(
+            self,
+            ctx: shellParser.BackQuotedInDoubleQuotedContext
+    ):
+        content = []
+        for child in ctx.getChildren():
+            bq_text = child.getText()
+            # Handle terminal nodes like `BQ_START_IN_DQ` and `BQ_END`
+            if bq_text == "`":
+                continue
+            content.extend(self.visitBackQuoted(child))
+        return content
 
-    def get_dict_from_sub_call(self, call_dict):
-        """
-        Get the call dictionary from a sub call.
-        """
-        if call_dict["cmd"] is not None:
-            if (
-                    len(call_dict["cmd"]) > 0
-                    and call_dict["cmd"][0] == call_dict["cmd"][-1] == "`"
-            ):
-                self.get_cmd_get_call(call_dict)
-                return
+    def visitBackQuoted(self, ctx: shellParser.BackQuotedContext):
+        bq_text = ctx.getText()
+        if bq_text[0] == bq_text[-1] == "`":
+            return self.converter(bq_text[1:-1]).execute()
 
-    def get_cmd_from_sub_call_cmd(self, command):
-        """ Get command dictionaries from sub call commands."""
-        for call_dict in command:
-            return self.get_dict_from_sub_call(call_dict)
+        return [self.converter(ctx.getText()).execute()]
 
-    def get_cmd_from_sub_call(self, cmd_line):
-        """ Get sub command dictionaries from call commands."""
-        for command in cmd_line:
-            self.get_cmd_from_sub_call_cmd(command)
-        return cmd_line
-
-    def get_call(self, command_string):
-        """
-        Get the call from the command string.
-        The call is a list of dictionaries with the call information.
-        """
-        cmdline = self.converter(command_string)
-        cmdline = self.clean_args(cmdline)
-        cmdline = self.get_sub_call(cmdline)
-        cmdline = self.get_cmd_from_sub_call(cmdline)
-        return cmdline
+    @staticmethod
+    def visitSingleQuoted(ctx: shellParser.SingleQuotedContext):
+        return ctx.SQ_CONTENT().getText()
 
     @staticmethod
     def visitUnquoted(ctx: shellParser.UnquotedContext):
-        """
-        Return the unquoted text from the context.
-        This method removes the quotes from the unquoted text.
-        """
-        uq = ctx.UNQUOTED().getText()
-        if uq[0] == '"' or uq[0] == "'":
-            uq = uq[1:]
-        if '"' in uq:
-            new_uq = ""
-            for char in uq:
-                if char != '"':
-                    new_uq += char
-            uq = new_uq
-        return uq
+        return ctx.UNQUOTED().getText()
+
+    def visitRedirection(self, ctx: shellParser.RedirectionContext):
+        if ctx.REDIRECT_INPUT():
+            return "stdin", self.visitArgument(ctx.argument())
+        elif ctx.REDIRECT_OUTPUT():
+            return "stdout", self.visitArgument(ctx.argument())
 
     @staticmethod
-    def visitQuoted(ctx: shellParser.QuotedContext):
-        if ctx.SINGLE_QUOTED():
-            return ctx.SINGLE_QUOTED().getText()
-        elif ctx.DOUBLE_QUOTED():
-            return ctx.DOUBLE_QUOTED().getText()[1:-1]
-        elif ctx.BACKQUOTED():
-            return ctx.BACKQUOTED().getText()
-
-    @staticmethod
-    def converter(string_to_parse):
-        """
-        Convert a string to a list of dictionaries with the call information.
-        The string is parsed using the shell grammar and the visitor pattern.
-        """
-        input_stream = InputStream(string_to_parse)
+    def converter(input_stream):
+        input_stream = InputStream(input_stream)
         lexer = shellLexer(input_stream)
-        tokens = CommonTokenStream(lexer)
-        parser = shellParser(tokens)
+        token_stream = CommonTokenStream(lexer)
+        parser = shellParser(token_stream)
         tree = parser.cmdline()
-        custom_visitor = ShellVisitor()
-        result = custom_visitor.visit(tree)
-        return result
 
-    @staticmethod
-    def filter_args(call_list, echo_flag):
-        """
-        Filter the arguments from the call list.
-        If the echo_flag is True, the arguments are returned as they are.
-        If the echo_flag is False, the arguments are returned without quotes.
-        """
-        if call_list is None:
-            return
-        res = [arg for arg in call_list[0] if arg]
-        if not echo_flag:
-            temp = []
-            for arg in res:
-                if arg[0] == arg[-1] == "'":
-                    temp.append(arg[1:-1])
-                else:
-                    temp.append(arg)
-            res = temp
+        visitor = ShellVisitor()
+        res = visitor.visit(tree)
+
         return res
