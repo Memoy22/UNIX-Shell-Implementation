@@ -5,5 +5,5 @@ import os
 
 
 class Pwd(Command):
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         return os.getcwd()

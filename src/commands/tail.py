@@ -8,7 +8,7 @@ from exceptions import FlagError
 
 class Tail(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         n, lines = self.validate_flags(args, stdin)
         if n == 0:
             return '\n'

@@ -7,7 +7,10 @@ from utils.file import File
 
 
 class Call(StructureCommand):
-    def __init__(self, cmd: str, arguments: list[str], stdin: Optional[list[str]], stdout: Optional[list[str]]):
+    def __init__(self, cmd: str,
+                 arguments: list[str],
+                 stdin: Optional[list[str]],
+                 stdout: Optional[list[str]]):
         self.cmd = cmd
         self.arguments = arguments
         self.stdin = stdin

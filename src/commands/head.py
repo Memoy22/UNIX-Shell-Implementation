@@ -8,7 +8,7 @@ from exceptions import FlagError
 
 class Head(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         n, lines = self.validate_flags(args, stdin)
 
         return '\n'.join(lines[:n])

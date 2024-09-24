@@ -8,7 +8,7 @@ from utils.validator import Validator
 
 class Wc(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         """
         Execute the wc command:
         -l: counts lines
@@ -30,7 +30,8 @@ class Wc(Command):
 
         return " ".join(output)
 
-    def validate_args(self, args, stdin) -> tuple[tuple[bool, bool, bool], list[str]]:
+    def validate_args(self, args, stdin)\
+            -> tuple[tuple[bool, bool, bool], list[str]]:
         """
         Raises:
             FlagError: If the flag given is not -l, -w, or -m.

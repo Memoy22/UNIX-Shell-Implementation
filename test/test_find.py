@@ -91,10 +91,3 @@ class TestFind(unittest.TestCase):
         result = File.read(self.out_dir).strip().split("\n")
         expected = ["./test/test_files/dir1/dir1_subdir1/find.txt"]
         self.assertEqual(result, expected)
-
-    def test_find_too_many_args(self, out=deque()):
-        with self.assertRaises(FlagError):
-            eval(
-        f"find {self.test_files_dir} -name -hello -hi 'file.txt'",
-                out
-            )

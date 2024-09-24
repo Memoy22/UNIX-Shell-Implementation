@@ -5,7 +5,7 @@ from typing import Optional
 
 
 class Cat(Command):
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         concat_output = []
         if args:
             for file_path in args:

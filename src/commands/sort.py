@@ -8,7 +8,7 @@ from exceptions import FlagError
 
 class Sort(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str :
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         rev, arguments = self.validate_args(args, stdin)
         lines = []
         for line in arguments:

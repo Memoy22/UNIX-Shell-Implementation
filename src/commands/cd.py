@@ -5,7 +5,7 @@ import os
 
 
 class Cd(Command):
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) ->None:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         if args:
             Validator.check_path_exists(args[0])
             os.chdir(args[0])

@@ -8,7 +8,7 @@ from utils.validator import Validator
 
 
 class Grep(Command):
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         """
         Raises:
             FlagError: If the number of flags given is not 1.

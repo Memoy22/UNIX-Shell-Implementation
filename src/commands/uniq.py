@@ -8,7 +8,7 @@ from exceptions import FlagError
 
 class Uniq(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         case_insensitive, arguments = self.validate_args(args, stdin)
         lines = []
         for line in arguments:
