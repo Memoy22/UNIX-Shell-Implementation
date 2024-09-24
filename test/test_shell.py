@@ -1,9 +1,7 @@
-import io
 import unittest
-from unittest.mock import patch
 from collections import deque
 from exceptions import CommandNotFoundError
-from shell import eval, interactive_mode, main
+from shell import eval
 
 
 def get_result(out, split_type="\n"):

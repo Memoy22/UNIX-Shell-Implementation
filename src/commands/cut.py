@@ -8,7 +8,7 @@ from utils.validator import Validator
 
 class Cut(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         cut_options, lines = self.validate_flags(args, stdin)
         output = []
 
@@ -53,7 +53,8 @@ class Cut(Command):
             raise FlagError("Error: Wrong number of flags given")
         return cut_options, lines
 
-    def pre_process_ranges(self, option_ranges: list[str], line_len: int) -> list[tuple[int, int]]:
+    def pre_process_ranges(self, option_ranges: list[str],
+                           line_len: int) -> list[tuple[int, int]]:
         """
         Changes cut bytes option_ranges into indices for slicing
         Raises:
@@ -86,7 +87,8 @@ class Cut(Command):
             Validator.check_string_isdigit(range_split[1])
 
     @staticmethod
-    def merge_intervals(option_ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    def merge_intervals(option_ranges: list[tuple[int, int]])\
+            -> list[tuple[int, int]]:
         """
         Merge the overlapping cut option ranges to get distinct cut bytes
         """
@@ -102,7 +104,8 @@ class Cut(Command):
         return resultant_range
 
     @staticmethod
-    def slice_line(resultant_range: list[tuple[int, int]], line: str) -> list[str]:
+    def slice_line(resultant_range: list[tuple[int, int]], line: str)\
+            -> list[str]:
         result_line = []
         for cur_range in resultant_range:
             cut_left = cur_range[0] - 1 if cur_range[0] != 0 else 0

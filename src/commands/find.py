@@ -9,7 +9,7 @@ import fnmatch
 
 class Find(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         path, pattern = self.validate_flags(args)
         matched_files = self.find_files(path, pattern)
         return '\n'.join(matched_files)

@@ -7,7 +7,7 @@ class Pipe(StructureCommand):
         self.left = left
         self.right = right
 
-    def execute(self, out = None) -> str:
+    def execute(self, out=None) -> str:
 
         res = self.left.execute()
 

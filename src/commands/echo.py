@@ -6,7 +6,7 @@ from commands.command import Command
 
 class Echo(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         if args is None:
             return "\n"
         args = self.pre_process_globbing_in_args(args)

@@ -8,7 +8,7 @@ import os
 
 class Ls(Command):
 
-    def execute(self, args: list[str], stdin: Optional[list[str]]=None) -> str:
+    def execute(self, args: list[str], stdin: Optional[list[str]] = None):
         path = self.validate_args(args)
         files = [file for file in os.listdir(path) if not file.startswith('.')]
         return '\t'.join(files)
